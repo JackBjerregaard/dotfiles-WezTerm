@@ -110,13 +110,18 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-# --- ZSH Enhancements ---
-source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Detect OS and set Homebrew path
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+    # Linux
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
 
 # Better keybindings
 bindkey '^F' autosuggest-accept       # Ctrl+F accepts full suggestion
@@ -150,3 +155,6 @@ alias ls="eza --icons=always"
  # --alias for wezterm.lua file 
  alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
  
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
