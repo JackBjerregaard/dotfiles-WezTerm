@@ -33,7 +33,7 @@ brew install zsh-autosuggestions zsh-syntax-highlighting
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ### 7. Clone and install dotfiles
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
+git clone https://github.com/JackBjerregaard/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 

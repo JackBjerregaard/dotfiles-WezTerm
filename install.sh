@@ -22,7 +22,7 @@ ln -sf ~/dotfiles/.wezterm.lua ~/.wezterm.lua
 # Clone nvim config if it doesn't exist
 if [ ! -d ~/.config/nvim ]; then
     echo "📦 Cloning nvim config..."
-    git clone https://github.com/YOUR_USERNAME/nvim-config.git ~/.config/nvim
+    git clone https://github.com/JackBjerregaard/nvim-config.git ~/.config/nvim
 else
     echo "✅ Nvim config already exists"
 fi
