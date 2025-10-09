@@ -14,9 +14,9 @@ config.colors = {
   brights = { "#214969", "#E52E2E", "#44FFB1", "#FFE073", "#A277FF", "#a277ff", "#24EAF7", "#24EAF7" },
 }
 config.font = wezterm.font("MesloLGS Nerd Font Mono")
-config.font_size = 12
+config.font_size = 14
 config.enable_tab_bar = true
-config.window_decorations = "RESIZE"
+config.window_decorations = "NONE"
 config.window_background_opacity = 0.95
 
 -- macOS blur only (harmless on Windows)
@@ -29,5 +29,15 @@ if wezterm.target_triple:find("windows") then
   config.wsl_domains = wezterm.default_wsl_domains()
   config.default_domain = "WSL:Ubuntu"
 end
+
+-- ctrl + shift + f for fullscreen
+config.keys = {
+  {
+    key = 'f',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action.ToggleFullScreen,
+  },
+}
+
 
 return config
