@@ -1,4 +1,4 @@
-
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -110,18 +110,13 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Detect OS and set Homebrew path
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-else
-    # Linux
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# --- ZSH Enhancements ---
+source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Better keybindings
 bindkey '^F' autosuggest-accept       # Ctrl+F accepts full suggestion
@@ -152,15 +147,14 @@ alias ls="eza --icons=always"
 
  alias cd="z"
 
-# --alias for wezterm.lua file
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    alias wezconfig="nvim ~/.wezterm.lua"
-else
-    # Linux/WSL
-    alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
-fi
+ # --alias for wezterm.lua file 
+ alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
+
+# .NET SDK
+export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+export PATH="$DOTNET_ROOT:$PATH"
+export PATH="$HOME/.dotnet/tools:$PATH"
  
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Created by `pipx` on 2025-10-10 18:54:39
+export PATH="$PATH:/home/jack/.local/bin"
