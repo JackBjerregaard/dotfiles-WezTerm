@@ -42,6 +42,11 @@ end
 config.keys = {
   { key = 'f', mods = 'CMD|SHIFT', action = wezterm.action.ToggleFullScreen },
 
+  -- Disable close confirmation for Ctrl+Shift+W (Windows/Linux)
+  { key = 'w', mods = 'CTRL|SHIFT', action = wezterm.action.CloseCurrentTab { confirm = false } },
+
+  -- Disable close confirmation for Cmd+W (macOS)
+  { key = 'w', mods = 'CMD', action = wezterm.action.CloseCurrentTab { confirm = false } },
 }
 
 return config
