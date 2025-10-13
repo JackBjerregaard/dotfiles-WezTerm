@@ -112,11 +112,20 @@ source $ZSH/oh-my-zsh.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# OS-specific Homebrew setup
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  BREW_PREFIX="/opt/homebrew"
+else
+  # Linux (WSL)
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+fi
 
 # --- ZSH Enhancements ---
-source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Better keybindings
 bindkey '^F' autosuggest-accept       # Ctrl+F accepts full suggestion
@@ -147,14 +156,24 @@ alias ls="eza --icons=always"
 
  alias cd="z"
 
- # --alias for wezterm.lua file 
- alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
+ # --alias for wezterm.lua file
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias wezconfig="nvim ~/.wezterm.lua"
+else
+  alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
+fi
 
 # .NET SDK
-export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+else
+  export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+fi
 export PATH="$DOTNET_ROOT:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
  
 
 # Created by `pipx` on 2025-10-10 18:54:39
-export PATH="$PATH:/home/jack/.local/bin"
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  export PATH="$PATH:/home/jack/.local/bin"
+fi

@@ -31,6 +31,7 @@ if wezterm.target_triple == "x86_64-apple-darwin"
   or wezterm.target_triple == "aarch64-apple-darwin" then
   config.macos_window_background_blur = 10
   config.native_macos_fullscreen_mode = true
+  config.font_size = 16
 end
 
 -- ==== open WSL:Ubuntu by default (Windows only) ====
@@ -39,8 +40,8 @@ if wezterm.target_triple:find("windows") then
   config.default_domain = "WSL:Ubuntu"
 end
 
-config.keys = {{ key = 'f', mods = 'CMD|SHIFT', action = wezterm.action.ToggleFullScreen,
-  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},},
+config.keys = {
+  { key = 'f', mods = 'CMD|SHIFT', action = wezterm.action.ToggleFullScreen },
 
   -- Disable close confirmation for Ctrl+Shift+W (Windows/Linux)
   { key = 'w', mods = 'CTRL|SHIFT', action = wezterm.action.CloseCurrentTab { confirm = false } },
