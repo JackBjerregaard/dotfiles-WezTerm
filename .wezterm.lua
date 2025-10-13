@@ -39,8 +39,8 @@ if wezterm.target_triple:find("windows") then
   config.default_domain = "WSL:Ubuntu"
 end
 
-config.keys = {
-  { key = 'f', mods = 'CMD|SHIFT', action = wezterm.action.ToggleFullScreen },
+config.keys = {{ key = 'f', mods = 'CMD|SHIFT', action = wezterm.action.ToggleFullScreen,
+  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},},
 
   -- Disable close confirmation for Ctrl+Shift+W (Windows/Linux)
   { key = 'w', mods = 'CTRL|SHIFT', action = wezterm.action.CloseCurrentTab { confirm = false } },
