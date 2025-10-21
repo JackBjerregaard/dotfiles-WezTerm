@@ -1,42 +1,79 @@
 # My Dotfiles
 
-Terminal setup with WezTerm, Zsh, Tmux, and Powerlevel10k theme.
+Terminal configuration files managed with GNU Stow.
 
-## 🎨 What's Included
+## Structure
+```
+dotfiles/
+├── zsh/         # Zsh + Powerlevel10k config
+├── tmux/        # Tmux configuration
+└── wezterm/     # WezTerm terminal emulator
+```
 
-- **Shell:** Zsh with Oh My Zsh
-- **Theme:** Powerlevel10k
-- **Terminal:** WezTerm with custom coolnight theme
-- **Multiplexer:** Tmux with TPM
-- **Tools:** eza, zoxide, bat, zsh-autosuggestions, zsh-syntax-highlighting
+## Installation
 
-## 📦 Installation on Mac
+### Prerequisites
 
-### 1. Install Homebrew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-### 2. Install required tools
-brew install git zsh tmux eza zoxide bat
+**macOS:**
+```bash
+brew install git zsh tmux eza zoxide bat neovim stow
 brew install --cask wezterm
 brew install font-meslo-lg-nerd-font
+brew install zsh-autosuggestions zsh-syntax-highlighting
+```
 
-### 3. Install Oh My Zsh
+**Linux (WSL/Ubuntu):**
+```bash
+sudo apt update
+sudo apt install git zsh tmux stow neovim
+```
+
+**All platforms:**
+```bash
+# Install Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-### 4. Install Powerlevel10k theme
+# Install Powerlevel10k
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
-### 5. Install zsh plugins
-brew install zsh-autosuggestions zsh-syntax-highlighting
-
-### 6. Install TPM (Tmux Plugin Manager)
+# Install TPM (Tmux Plugin Manager)
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
 
-### 7. Clone and install dotfiles
-git clone https://github.com/JackBjerregaard/dotfiles.git ~/dotfiles
+### Setup
+```bash
+# Clone dotfiles
+git clone git@github.com:JackBjerregaard/dotfiles-WezTerm.git ~/dotfiles
+
+# Clone nvim config
+git clone git@github.com:JackBjerregaard/neovim-config.git ~/.config/nvim
+
+# Stow all configs
 cd ~/dotfiles
-./install.sh
+stow zsh tmux wezterm
 
-### 8. Final steps
+# Reload shell
 source ~/.zshrc
+
+# Configure Powerlevel10k (first time only)
 p10k configure
+
+# Install tmux plugins (in tmux: Ctrl+A then Shift+I)
+```
+
+## Usage
+```bash
+# Install a config
+stow zsh
+
+# Remove a config
+stow -D zsh
+
+# Restow (useful after making changes)
+stow -R zsh
+```
+
+## Neovim Config
+
+Neovim configuration is kept in a separate repo:
+https://github.com/JackBjerregaard/neovim-config
