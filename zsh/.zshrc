@@ -159,8 +159,10 @@ alias ls="eza --icons=always"
  # --alias for wezterm.lua file
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias wezconfig="nvim ~/.wezterm.lua"
+  alias sync-wez="cp ~/.wezterm.lua ~/dotfiles/wezterm/.wezterm.lua && echo '✓ WezTerm config synced to dotfiles'"
 else
   alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
+  alias sync-wez="cp /mnt/c/Users/giaco/.wezterm.lua ~/dotfiles/wezterm/.wezterm.lua && echo '✓ WezTerm config synced to dotfiles'"
 fi
 
 # .NET SDK
