@@ -30,9 +30,10 @@ config.window_background_opacity = 0.95
 
 config.skip_close_confirmation_for_processes_named = {}
 
--- macOS blur only (harmless on Windows)
+-- macOS-specific settings
 if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
   config.macos_window_background_blur = 10
+  config.font_size = 16
 end
 
  -- ==== open WSL:Ubuntu by default (recommended) ====
