@@ -179,3 +179,6 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 if [[ "$OSTYPE" != "darwin"* ]]; then
   export PATH="$PATH:/home/jack/.local/bin"
 fi
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+alias rars='java -jar ~/Documents/CompSys/rars1_6.jar'
