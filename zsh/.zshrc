@@ -181,4 +181,9 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
 fi
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
-alias rars='java -jar ~/Documents/CompSys/rars1_6.jar'
+# Launch RARS from the appropriate jar on macOS vs WSL
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias rars='java -jar ~/Documents/CompSys/rars1_6.jar'
+else
+  alias rars='java -jar ~/CompSys-2025/rars1_5.jar'
+fi
