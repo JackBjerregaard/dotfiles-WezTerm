@@ -173,6 +173,9 @@ else
 fi
 export PATH="$DOTNET_ROOT:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
+
+# RISC-V cross-compiler (local install)
+export PATH="$HOME/opt/bin:$PATH"
  
 
 # Created by `pipx` on 2025-10-10 18:54:39
@@ -186,4 +189,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   alias rars='java -jar ~/Documents/CompSys/rars1_6.jar'
 else
   alias rars='java -jar ~/CompSys-2025/rars1_5.jar'
+fi
+
+# RISC-V simulator helper (Linux/WSL only)
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  alias riscv-sim="$HOME/CompSys-2025/tools/riscv-sim/sim-linux"
+  riscv-run() {
+    local elf="$1"
+    shift || true
+    "$HOME/CompSys-2025/tools/riscv-sim/sim-linux" "$elf" -- "$@"
+  }
+  alias riscv-objdump="riscv32-unknown-elf-objdump -d -S"
 fi
