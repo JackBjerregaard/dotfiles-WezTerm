@@ -177,6 +177,13 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 # RISC-V cross-compiler (local install)
 export PATH="$HOME/opt/bin:$PATH"
  
+# RISC-V compiler alias (macOS + Linux)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias rv32-gcc="riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
+else
+  alias rv32-gcc="$HOME/CompSys-2025/tools/riscv/bin/riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
+fi
+
 
 # Created by `pipx` on 2025-10-10 18:54:39
 if [[ "$OSTYPE" != "darwin"* ]]; then
@@ -200,4 +207,6 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     "$HOME/CompSys-2025/tools/riscv-sim/sim-linux" "$elf" -- "$@"
   }
   alias riscv-objdump="riscv32-unknown-elf-objdump -d -S"
+else
+  alias riscv-objdump="riscv64-unknown-elf-objdump -d -S"
 fi
