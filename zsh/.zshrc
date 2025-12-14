@@ -175,7 +175,9 @@ export PATH="$DOTNET_ROOT:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
 
 # RISC-V cross-compiler (local install)
-export PATH="$HOME/opt/bin:$PATH"
+if [[ -d "$HOME/CompSys-2025/tools/riscv/bin" ]]; then
+  export PATH="$HOME/CompSys-2025/tools/riscv/bin:$PATH"
+fi
  
 # RISC-V compiler alias (macOS + Linux)
 if [[ "$OSTYPE" == "darwin"* ]]; then
