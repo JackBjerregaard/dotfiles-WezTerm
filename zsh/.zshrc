@@ -178,12 +178,25 @@ export PATH="$HOME/.dotnet/tools:$PATH"
 if [[ -d "$HOME/CompSys-2025/tools/riscv/bin" ]]; then
   export PATH="$HOME/CompSys-2025/tools/riscv/bin:$PATH"
 fi
- 
-# RISC-V compiler alias (macOS + Linux)
+export PATH="$HOME/opt/bin:$PATH"
+
+# Locate the course-provided RISC-V toolchain on macOS vs WSL/Linux
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  alias rv32-gcc="riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
+  RISCV_TOOLCHAIN_ROOT="$HOME/Documents/CompSys/CompSys-2025/tools/riscv"
 else
-  alias rv32-gcc="$HOME/CompSys-2025/tools/riscv/bin/riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
+  RISCV_TOOLCHAIN_ROOT="$HOME/CompSys-2025/tools/riscv"
+fi
+RISCV_BIN="$RISCV_TOOLCHAIN_ROOT/bin"
+if [[ -d "$RISCV_BIN" ]]; then
+  export PATH="$RISCV_BIN:$PATH"
+fi
+
+# RISC-V compiler alias (macOS + Linux)
+RISCV_GCC="$RISCV_BIN/riscv64-unknown-elf-gcc"
+if [[ -x "$RISCV_GCC" ]]; then
+  alias rv32-gcc="$RISCV_GCC -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
+elif command -v riscv64-unknown-elf-gcc >/dev/null 2>&1; then
+  alias rv32-gcc="riscv64-unknown-elf-gcc -march=rv32im -mabi=ilp32 -O1 -nostartfiles -nostdlib"
 fi
 
 
@@ -200,15 +213,31 @@ else
   alias rars='java -jar ~/CompSys-2025/rars1_5.jar'
 fi
 
-# RISC-V simulator helper (Linux/WSL only)
+# RISC-V simulator helper (cross-platform per course guide)
 if [[ "$OSTYPE" != "darwin"* ]]; then
-  alias riscv-sim="$HOME/CompSys-2025/tools/riscv-sim/sim-linux"
+  # Linux/WSL (per course: "På Windows kan bruges WSL og Linux udgaven")
+  RISCV_SIM_BIN="$HOME/CompSys-2025/tools/riscv-sim/sim-linux"
+  alias riscv-sim="$RISCV_SIM_BIN"
   riscv-run() {
     local elf="$1"
     shift || true
-    "$HOME/CompSys-2025/tools/riscv-sim/sim-linux" "$elf" -- "$@"
+    "$RISCV_SIM_BIN" "$elf" -- "$@"
   }
   alias riscv-objdump="riscv32-unknown-elf-objdump -d -S"
 else
+  # macOS (per course: "Der er eksekverbare udgaver for... Mac (både x86 or ARM)")
+  if [[ "$(uname -m)" == "arm64" ]]; then
+    # Apple Silicon (ARM)
+    RISCV_SIM_BIN="$HOME/Documents/CompSys/CompSys-2025/tools/riscv-sim/sim-mac"
+  else
+    # Intel Mac (x86)
+    RISCV_SIM_BIN="$HOME/Documents/CompSys/CompSys-2025/tools/riscv-sim/sim-mac-x86"
+  fi
+  alias riscv-sim="$RISCV_SIM_BIN"
+  riscv-run() {
+    local elf="$1"
+    shift || true
+    "$RISCV_SIM_BIN" "$elf" -- "$@"
+  }
   alias riscv-objdump="riscv64-unknown-elf-objdump -d -S"
 fi
