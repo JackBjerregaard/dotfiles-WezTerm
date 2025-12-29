@@ -38,6 +38,9 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 
 # Install TPM (Tmux Plugin Manager)
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# Install zsh-vi-mode plugin
+git clone https://github.com/jeffreytse/zsh-vi-mode ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-vi-mode
 ```
 
 ### Setup
