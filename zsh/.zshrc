@@ -77,10 +77,6 @@ ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode)
-=======
-# Load Plugins
-# zsh-vi-mode is now correctly included here
 plugins=(
   git
   zsh-vi-mode
