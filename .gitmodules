@@ -1,0 +1,9 @@
+[submodule "claude/.claude/skills/stop-slop"]
+	path = claude/.claude/skills/stop-slop
+	url = https://github.com/hardikpandya/stop-slop.git
+[submodule "claude/.claude/skills/everything-claude-code"]
+	path = claude/.claude/skills/everything-claude-code
+	url = https://github.com/affaan-m/everything-claude-code.git
+[submodule "claude/.claude/skills/get-shit-done"]
+	path = claude/.claude/skills/get-shit-done
+	url = https://github.com/gsd-build/get-shit-done.git

@@ -2,3 +2,10 @@
 *.log
 .ssh/
 .aws/
+# Claude machine-specific dirs (not synced)
+claude/.claude/projects/
+claude/.claude/sessions/
+claude/.claude/backups/
+claude/.claude/plans/
+claude/.claude/shell-snapshots/
+claude/.claude/file-history/
