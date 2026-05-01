@@ -13,7 +13,7 @@ export LANG=C.utf8
 export LC_ALL=C.utf8
 
 # CompSys: Dotnet and Local Binaries
-export PATH="$HOME/opt/bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/opt/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 
 # =============================================================================
 # 3. OH-MY-ZSH CONFIGURATION
