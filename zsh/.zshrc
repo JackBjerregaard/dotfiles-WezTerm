@@ -200,3 +200,20 @@ riscv-run() {
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# bun completions
+[ -s "/home/jack/.bun/_bun" ] && source "/home/jack/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias claude-mem='bun "/home/jack/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+# Use Homebrew .NET 9 by default
+export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
+export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:$PATH"
+
+# Prefer Homebrew dotnet@9 for Fasto
+export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
+export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
