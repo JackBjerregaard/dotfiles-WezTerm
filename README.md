@@ -16,7 +16,7 @@ dotfiles/
 
 **macOS:**
 ```bash
-brew install git zsh tmux eza zoxide bat neovim stow
+brew install git zsh tmux eza zoxide bat neovim stow node
 brew install --cask wezterm
 brew install font-meslo-lg-nerd-font
 brew install zsh-autosuggestions zsh-syntax-highlighting
@@ -25,7 +25,13 @@ brew install zsh-autosuggestions zsh-syntax-highlighting
 **Linux (WSL/Ubuntu):**
 ```bash
 sudo apt update
-sudo apt install git zsh tmux stow neovim
+sudo apt install git zsh tmux stow neovim nodejs npm
+```
+
+**npm globals (all platforms):**
+```bash
+# Add packages to npm-global-packages.txt, then install them with:
+./scripts/install-npm-globals.sh
 ```
 
 **All platforms:**
@@ -54,6 +60,9 @@ git clone git@github.com:JackBjerregaard/neovim-config.git ~/.config/nvim
 # Stow all configs
 cd ~/dotfiles
 stow zsh tmux wezterm
+
+# Install npm global packages listed in npm-global-packages.txt
+./scripts/install-npm-globals.sh
 
 # Reload shell
 source ~/.zshrc

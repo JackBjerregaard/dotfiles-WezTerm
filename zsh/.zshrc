@@ -13,7 +13,7 @@ export LANG=C.utf8
 export LC_ALL=C.utf8
 
 # CompSys: Dotnet and Local Binaries
-export PATH="$HOME/opt/bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/opt/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 
 # =============================================================================
 # 3. OH-MY-ZSH CONFIGURATION
@@ -94,12 +94,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   BREW_PREFIX="/opt/homebrew"
   alias wezconfig="nvim ~/.wezterm.lua"
   export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+  # Postgres.app command-line tools
+  if [[ -d "/Applications/Postgres.app/Contents/Versions/latest/bin" ]]; then
+    export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
+  fi
 else
   # Linux (WSL)
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   BREW_PREFIX="/home/linuxbrew/.linuxbrew"
   alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
   export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+  # PostgreSQL client tools from Linuxbrew, when installed
+  for pg_bin in "$BREW_PREFIX"/opt/{libpq,postgresql,postgresql@18,postgresql@17,postgresql@16}/bin(N); do
+    export PATH="$pg_bin:$PATH"
+    break
+  done
 fi
 
 # Add .NET to PATH
