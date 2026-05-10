@@ -12,6 +12,7 @@ Terminal and system configuration managed with [GNU Stow](https://www.gnu.org/so
 | `sketchybar/` | macOS status bar |
 | `yabai/` | macOS tiling window manager (macOS only) |
 | `skhd/` | macOS hotkey daemon (macOS only) |
+| `karabiner/` | Karabiner-Elements keyboard remaps (macOS only) |
 | `claude/` | Claude AI settings & skills |
 
 ---
@@ -45,7 +46,7 @@ brew install git zsh tmux eza zoxide bat neovim stow node
 brew install asmvik/formulae/yabai asmvik/formulae/skhd
 brew tap FelixKratz/formulae
 brew install sketchybar switchaudio-osx nowplaying-cli lua
-brew install --cask wezterm
+brew install --cask wezterm karabiner-elements
 brew install --cask font-meslo-lg-nerd-font font-jetbrains-mono-nerd-font font-sketchybar-app-font
 brew install zsh-autosuggestions zsh-syntax-highlighting
 ```
@@ -86,7 +87,7 @@ brew install neovim eza zoxide bat node
 
 **4. Continue to [Common Setup](#common-setup)**
 
-> Window management tools (yabai, skhd, sketchybar) are macOS-only — skip those stow targets.
+> Window management tools and keyboard remaps (yabai, skhd, sketchybar, karabiner) are macOS-only — skip those stow targets.
 
 ---
 
@@ -159,7 +160,7 @@ git clone git@github.com:JackBjerregaard/neovim-config.git ~/.config/nvim
 cd ~/dotfiles
 
 # macOS — all configs:
-stow zsh tmux wezterm yabai skhd sketchybar
+stow zsh tmux wezterm yabai skhd sketchybar karabiner
 
 # Linux / WSL — zsh + tmux only (skip macOS-only targets):
 stow zsh tmux
@@ -221,6 +222,8 @@ stow -R zsh     # Relink (useful after making changes)
 
 Modifier names: `alt` = Option, `cmd` = Command, `ctrl` = Control, `shift` = Shift.
 Hyper-style bindings use `shift + ctrl + alt + cmd`.
+
+Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `shift + ctrl + alt + cmd + h`. It also swaps the global `Fn` key and left `Control`.
 
 **Launch:**
 - `alt + return`: open WezTerm

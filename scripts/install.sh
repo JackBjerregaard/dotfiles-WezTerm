@@ -51,7 +51,7 @@ setup_macos() {
   brew install asmvik/formulae/yabai asmvik/formulae/skhd
   brew tap FelixKratz/formulae
   brew install sketchybar switchaudio-osx nowplaying-cli lua
-  brew install --cask wezterm
+  brew install --cask wezterm karabiner-elements
   brew install --cask font-meslo-lg-nerd-font font-jetbrains-mono-nerd-font font-sketchybar-app-font
   brew install zsh-autosuggestions zsh-syntax-highlighting
 
@@ -131,7 +131,7 @@ stow_configs() {
   cd "$DOTFILES_DIR"
   stow zsh tmux
   if [[ "$OS" == "macos" ]]; then
-    stow wezterm yabai skhd sketchybar
+    stow wezterm yabai skhd sketchybar karabiner
   fi
   success "Configs stowed"
 }
