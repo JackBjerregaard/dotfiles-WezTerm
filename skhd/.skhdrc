@@ -69,9 +69,9 @@ shift + ctrl + alt + cmd - g : yabai -m window --display east; yabai -m display 
 shift + ctrl + alt + cmd - p : yabai -m window --space prev
 shift + ctrl + alt + cmd - n : yabai -m window --space next
 
-shift + alt - p : yabai -m window --space prev && yabai -m space --focus prev
-shift + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m window --space "$index" && yabai -m space --focus "$index" && command -v sketchybar >/dev/null && sketchybar --reload
-ctrl + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m space --focus "$index" && command -v sketchybar >/dev/null && sketchybar --reload
+shift + alt - p : window_id="$(yabai -m query --windows --window | jq -r '.id // empty')" && yabai -m window "$window_id" --space prev && yabai -m space --focus prev && sleep 0.05 && yabai -m window --focus "$window_id"
+shift + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" "$index"
+ctrl + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m space --focus "$index" && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh" && command -v sketchybar >/dev/null && sketchybar --reload
 shift + alt - d : yabai -m space --destroy && command -v sketchybar >/dev/null && sketchybar --reload
 ctrl + alt - d : current="$(yabai -m query --spaces --space | jq -r '.index')" && yabai -m query --spaces | jq -r '.[].index' | sort -rn | while read -r space; do [ "$space" = "$current" ] || yabai -m space "$space" --destroy; done; command -v sketchybar >/dev/null && sketchybar --reload
 
