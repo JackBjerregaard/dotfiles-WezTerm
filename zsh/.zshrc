@@ -13,7 +13,7 @@ export LANG=C.utf8
 export LC_ALL=C.utf8
 
 # CompSys: Dotnet and Local Binaries
-export PATH="$HOME/opt/bin:$HOME/.local/bin:$PATH"
+export PATH="$HOME/opt/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 
 # =============================================================================
 # 3. OH-MY-ZSH CONFIGURATION
@@ -210,5 +210,18 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Homebrew OpenJDK
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Homebrew OpenJDK
+  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+else
+  # bun
+  [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+  export BUN_INSTALL="$HOME/.bun"
+  export PATH="$BUN_INSTALL/bin:$PATH"
+
+  alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+  # Homebrew .NET 9 (Linuxbrew) — covers both bin and libexec for Fasto
+  export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
+  export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
+fi
