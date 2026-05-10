@@ -255,6 +255,9 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `shift + alt + 1..9`: move to space 1..9 and follow
 - `shift + alt + p`: move to previous space and follow
 - `shift + alt + n`: create new space, move focused window there, reload SketchyBar
+- `ctrl + alt + n`: create new empty space, focus it, reload SketchyBar
+- `shift + alt + d`: destroy current space, reload SketchyBar
+- `ctrl + alt + d`: destroy all spaces except the current space, reload SketchyBar
 
 **Resize windows:**
 - `shift + alt + h/j/k/l`: resize west/south/north/east

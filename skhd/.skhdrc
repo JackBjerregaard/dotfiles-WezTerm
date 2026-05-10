@@ -73,6 +73,7 @@ shift + alt - p : yabai -m window --space prev && yabai -m space --focus prev
 shift + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m window --space "$index" && yabai -m space --focus "$index" && command -v sketchybar >/dev/null && sketchybar --reload
 ctrl + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m space --focus "$index" && command -v sketchybar >/dev/null && sketchybar --reload
 shift + alt - d : yabai -m space --destroy && command -v sketchybar >/dev/null && sketchybar --reload
+ctrl + alt - d : current="$(yabai -m query --spaces --space | jq -r '.index')" && yabai -m query --spaces | jq -r '.[].index' | sort -rn | while read -r space; do [ "$space" = "$current" ] || yabai -m space "$space" --destroy; done; command -v sketchybar >/dev/null && sketchybar --reload
 
 shift + ctrl + alt + cmd - 1 : yabai -m window --space 1
 shift + ctrl + alt + cmd - 2 : yabai -m window --space 2
