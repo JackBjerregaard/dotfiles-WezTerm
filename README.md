@@ -252,7 +252,7 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `shift + ctrl + alt + cmd + s/g`: move to display west/east
 - `shift + ctrl + alt + cmd + p/n`: move to previous/next space
 - `shift + ctrl + alt + cmd + 1..7`: move to space 1..7
-- `shift + alt + 1..9`: move to space 1..9 and follow
+- `shift + alt + 1..9`: create missing spaces up to 1..9, move the focused window there, follow, and re-focus the window
 - `shift + alt + p`: move to previous space and follow
 - `shift + alt + n`: create new space, move focused window there, reload SketchyBar
 - `ctrl + alt + n`: create new empty space, focus it, reload SketchyBar
