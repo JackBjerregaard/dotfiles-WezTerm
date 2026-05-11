@@ -1,8 +1,9 @@
 # Starter skhd config for yabai.
-# "Hyper" means shift + ctrl + alt + cmd in this file.
+# "Hyper" means ctrl + alt + cmd in this file.
+# "Shift + Hyper" means shift + ctrl + alt + cmd.
 
 # Launch WezTerm.
-alt - return : open -na /Applications/WezTerm.app
+alt - return : open -na /Applications/WezTerm.app && osascript -e 'tell application "WezTerm" to activate'
 
 # Changing focus.
 alt - j : yabai -m window --focus south
@@ -10,88 +11,94 @@ alt - k : yabai -m window --focus north
 alt - h : yabai -m window --focus west
 alt - l : yabai -m window --focus east
 
-alt - s : yabai -m display --focus west
-alt - g : yabai -m display --focus east
+alt - s : yabai -m display --focus west && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+alt - g : yabai -m display --focus east && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
 
 # Focus spaces instantly through yabai instead of macOS shortcuts.
-alt - p : yabai -m space --focus prev
-alt - n : yabai -m space --focus next
+alt - p : yabai -m space --focus prev && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+alt - n : yabai -m space --focus next && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
 
-alt - 1 : yabai -m space --focus 1
-alt - 2 : yabai -m space --focus 2
-alt - 3 : yabai -m space --focus 3
-alt - 4 : yabai -m space --focus 4
-alt - 5 : yabai -m space --focus 5
-alt - 6 : yabai -m space --focus 6
-alt - 7 : yabai -m space --focus 7
-
-ctrl - 1 : yabai -m space --focus 1
-ctrl - 2 : yabai -m space --focus 2
-ctrl - 3 : yabai -m space --focus 3
-ctrl - 4 : yabai -m space --focus 4
-ctrl - 5 : yabai -m space --focus 5
-ctrl - 6 : yabai -m space --focus 6
-ctrl - 7 : yabai -m space --focus 7
-ctrl - 8 : yabai -m space --focus 8
-ctrl - 9 : yabai -m space --focus 9
+ctrl - 1 : yabai -m space --focus 1 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 2 : yabai -m space --focus 2 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 3 : yabai -m space --focus 3 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 4 : yabai -m space --focus 4 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 5 : yabai -m space --focus 5 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 6 : yabai -m space --focus 6 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 7 : yabai -m space --focus 7 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 8 : yabai -m space --focus 8 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+ctrl - 9 : yabai -m space --focus 9 && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
 
 # Modify layout.
+ctrl + alt + cmd - e : yabai -m space --balance
 shift + ctrl + alt + cmd - e : yabai -m space --balance
+ctrl + alt + cmd - r : yabai -m space --rotate 270
 shift + ctrl + alt + cmd - r : yabai -m space --rotate 270
+ctrl + alt + cmd - y : yabai -m space --mirror y-axis
 shift + ctrl + alt + cmd - y : yabai -m space --mirror y-axis
+ctrl + alt + cmd - x : yabai -m space --mirror x-axis
 shift + ctrl + alt + cmd - x : yabai -m space --mirror x-axis
 
 # Moving windows around.
+ctrl + alt + cmd - j : yabai -m window --swap south
 shift + ctrl + alt + cmd - j : yabai -m window --swap south
+ctrl + alt + cmd - k : yabai -m window --swap north
 shift + ctrl + alt + cmd - k : yabai -m window --swap north
+ctrl + alt + cmd - h : yabai -m window --swap west
 shift + ctrl + alt + cmd - h : yabai -m window --swap west
+ctrl + alt + cmd - l : yabai -m window --swap east
 shift + ctrl + alt + cmd - l : yabai -m window --swap east
 
-shift + alt - f : yabai -m window --toggle native-fullscreen
+ctrl + alt + cmd - f : yabai -m window --toggle native-fullscreen
+shift + ctrl + alt + cmd - f : yabai -m window --toggle native-fullscreen
+ctrl + alt + cmd - m : yabai -m window --toggle zoom-fullscreen
 shift + ctrl + alt + cmd - m : yabai -m window --toggle zoom-fullscreen
+ctrl + alt + cmd - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 shift + ctrl + alt + cmd - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
 # Resize windows.
-shift + alt - h : yabai -m window west --resize right:-20:0 2> /dev/null || yabai -m window --resize right:-20:0
-shift + alt - j : yabai -m window south --resize top:0:-20 2> /dev/null || yabai -m window --resize top:0:-20
-shift + alt - k : yabai -m window north --resize bottom:0:20 2> /dev/null || yabai -m window --resize bottom:0:20
-shift + alt - l : yabai -m window east --resize left:20:0 2> /dev/null || yabai -m window --resize left:20:0
+cmd + ctrl - h : yabai -m window west --resize right:-20:0 2> /dev/null || yabai -m window --resize right:-20:0
+cmd + ctrl - j : yabai -m window south --resize top:0:-20 2> /dev/null || yabai -m window --resize top:0:-20
+cmd + ctrl - k : yabai -m window north --resize bottom:0:20 2> /dev/null || yabai -m window --resize bottom:0:20
+cmd + ctrl - l : yabai -m window east --resize left:20:0 2> /dev/null || yabai -m window --resize left:20:0
 
 ctrl + alt - j : yabai -m window --warp south
 ctrl + alt - k : yabai -m window --warp north
 ctrl + alt - h : yabai -m window --warp west
 ctrl + alt - l : yabai -m window --warp east
 
-shift + ctrl + alt + cmd - s : yabai -m window --display west; yabai -m display --focus west
-shift + ctrl + alt + cmd - g : yabai -m window --display east; yabai -m display --focus east
+ctrl + alt + cmd - s : "$HOME/dotfiles/scripts/yabai-move-window-to-display.sh" west
+shift + ctrl + alt + cmd - s : "$HOME/dotfiles/scripts/yabai-move-window-to-display.sh" west
+ctrl + alt + cmd - g : "$HOME/dotfiles/scripts/yabai-move-window-to-display.sh" east
+shift + ctrl + alt + cmd - g : "$HOME/dotfiles/scripts/yabai-move-window-to-display.sh" east
 
 # Some space-moving commands may require yabai's scripting addition.
-shift + ctrl + alt + cmd - p : yabai -m window --space prev
-shift + ctrl + alt + cmd - n : yabai -m window --space next
-
-shift + alt - p : window_id="$(yabai -m query --windows --window | jq -r '.id // empty')" && yabai -m window "$window_id" --space prev && yabai -m space --focus prev && sleep 0.05 && yabai -m window --focus "$window_id"
-shift + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" "$index"
+ctrl + alt + cmd - p : "$HOME/dotfiles/scripts/yabai-move-window-to-relative-space.sh" prev
+shift + ctrl + alt + cmd - p : "$HOME/dotfiles/scripts/yabai-move-window-to-relative-space.sh" prev
+ctrl + alt + cmd - n : "$HOME/dotfiles/scripts/yabai-move-window-to-relative-space.sh" next
+shift + ctrl + alt + cmd - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" "$index"
 ctrl + alt - n : yabai -m space --create && index="$(yabai -m query --spaces | jq '.[-1].index')" && yabai -m space --focus "$index" && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh" && command -v sketchybar >/dev/null && sketchybar --reload
-shift + alt - d : yabai -m space --destroy && command -v sketchybar >/dev/null && sketchybar --reload
-ctrl + alt - d : current="$(yabai -m query --spaces --space | jq -r '.index')" && yabai -m query --spaces | jq -r '.[].index' | sort -rn | while read -r space; do [ "$space" = "$current" ] || yabai -m space "$space" --destroy; done; command -v sketchybar >/dev/null && sketchybar --reload
+ctrl + alt + cmd - d : yabai -m space --destroy && "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh" && command -v sketchybar >/dev/null && sketchybar --reload
+ctrl + alt - d : "$HOME/dotfiles/scripts/yabai-destroy-empty-spaces.sh"
 
-shift + ctrl + alt + cmd - 1 : yabai -m window --space 1
-shift + ctrl + alt + cmd - 2 : yabai -m window --space 2
-shift + ctrl + alt + cmd - 3 : yabai -m window --space 3
-shift + ctrl + alt + cmd - 4 : yabai -m window --space 4
-shift + ctrl + alt + cmd - 5 : yabai -m window --space 5
-shift + ctrl + alt + cmd - 6 : yabai -m window --space 6
-shift + ctrl + alt + cmd - 7 : yabai -m window --space 7
+ctrl + alt + cmd - 1 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 1
+ctrl + alt + cmd - 2 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 2
+ctrl + alt + cmd - 3 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 3
+ctrl + alt + cmd - 4 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 4
+ctrl + alt + cmd - 5 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 5
+ctrl + alt + cmd - 6 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 6
+ctrl + alt + cmd - 7 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 7
+ctrl + alt + cmd - 8 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 8
+ctrl + alt + cmd - 9 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 9
 
-shift + alt - 1 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 1
-shift + alt - 2 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 2
-shift + alt - 3 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 3
-shift + alt - 4 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 4
-shift + alt - 5 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 5
-shift + alt - 6 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 6
-shift + alt - 7 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 7
-shift + alt - 8 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 8
-shift + alt - 9 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 9
+shift + ctrl + alt + cmd - 1 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 1
+shift + ctrl + alt + cmd - 2 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 2
+shift + ctrl + alt + cmd - 3 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 3
+shift + ctrl + alt + cmd - 4 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 4
+shift + ctrl + alt + cmd - 5 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 5
+shift + ctrl + alt + cmd - 6 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 6
+shift + ctrl + alt + cmd - 7 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 7
+shift + ctrl + alt + cmd - 8 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 8
+shift + ctrl + alt + cmd - 9 : "$HOME/dotfiles/scripts/yabai-move-window-to-space.sh" 9
 
 # Restart services after editing config.
 ctrl + alt - q : yabai --stop-service

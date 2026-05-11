@@ -142,10 +142,6 @@ setopt hist_expire_dups_first
 setopt hist_ignore_dups
 setopt hist_verify
 
-# Initialize Zoxide (Better cd)
-eval "$(zoxide init zsh)"
-alias cd="z"
-
 # =============================================================================
 # 6. ALIASES & TOOLS
 # =============================================================================
@@ -223,5 +219,12 @@ else
 
   # Homebrew .NET 9 (Linuxbrew) — covers both bin and libexec for Fasto
   export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
-  export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
+	  export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
+	fi
+
+# Initialize Zoxide (Better cd)
+# Keep this at the end so zoxide's shell hook is not overwritten by later setup.
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+  alias cd="z"
 fi

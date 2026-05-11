@@ -221,21 +221,22 @@ stow -R zsh     # Relink (useful after making changes)
 ### skhd Keybinds
 
 Modifier names: `alt` = Option, `cmd` = Command, `ctrl` = Control, `shift` = Shift.
-`hyper` means `shift + ctrl + alt + cmd`.
+`hyper` means `ctrl + alt + cmd` for physical key chords.
+Caps Lock emits `shift + ctrl + alt + cmd`, and the main Hyper window actions accept that chord too.
+`shift + hyper` means `shift + ctrl + alt + cmd`.
 
 Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `hyper + h`. It also swaps the global `Fn` key and left `Control`.
 
 **Launch:**
-- `alt + return`: open WezTerm
+- `alt + return`: open WezTerm and focus it
 
 **Focus windows:**
 - `alt + h/j/k/l`: focus west/south/north/east
 - `alt + s/g`: focus display west/east
 
 **Focus spaces:**
-- `alt + p/n`: previous/next space
-- `alt + 1..7`: focus space 1..7
-- `ctrl + 1..9`: focus space 1..9
+- `alt + p/n`: previous/next space, then focus a window there
+- `ctrl + 1..9`: focus space 1..9, then focus a window there
 
 **Layout:**
 - `hyper + e`: balance windows
@@ -243,24 +244,24 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `hyper + y`: mirror y-axis
 - `hyper + x`: mirror x-axis
 - `hyper + m`: yabai zoom fullscreen
-- `shift + alt + f`: native macOS fullscreen
+- `hyper + f`: native macOS fullscreen
 - `hyper + t`: toggle floating centered window
 
 **Move windows:**
 - `hyper + h/j/k/l`: swap west/south/north/east
 - `ctrl + alt + h/j/k/l`: warp west/south/north/east
-- `hyper + s/g`: move to display west/east
-- `hyper + p/n`: move to previous/next space
-- `hyper + 1..7`: move to space 1..7
-- `shift + alt + 1..9`: create missing spaces up to 1..9, move the focused window there, follow, and re-focus the window
-- `shift + alt + p`: move to previous space and follow
-- `shift + alt + n`: create new space, move focused window there, reload SketchyBar
+- `hyper + s/g`: move focused window to display west/east and follow it
+- `hyper + 1..9`: move focused window to space 1..9, follow it, and re-focus it
+- `shift + hyper + 1..9`: create missing spaces up to 1..9, move the focused window there, follow, and re-focus the window
+- `hyper + p/n`: move focused window to previous/next space, follow it, and re-focus it
+- `shift + hyper + p`: move focused window to previous space and follow
+- `shift + hyper + n`: create new space, move focused window there, reload SketchyBar
 - `ctrl + alt + n`: create new empty space, focus it, reload SketchyBar
-- `shift + alt + d`: destroy current space, reload SketchyBar
-- `ctrl + alt + d`: destroy all spaces except the current space, reload SketchyBar
+- `hyper + d`: destroy current space, reload SketchyBar
+- `ctrl + alt + d`: destroy all empty spaces, reload SketchyBar
 
 **Resize windows:**
-- `shift + alt + h/j/k/l`: resize west/south/north/east
+- `cmd + ctrl + h/j/k/l`: resize west/south/north/east
 
 **Service controls:**
 - `ctrl + alt + q`: stop yabai

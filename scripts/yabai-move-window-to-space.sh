@@ -24,8 +24,7 @@ done
 
 yabai -m window "$window_id" --space "$target"
 yabai -m space --focus "$target"
-sleep "${YABAI_FOCUS_DELAY:-0.05}"
-yabai -m window --focus "$window_id" || "$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+"$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh" "$window_id"
 
 if [ "$created_space" = true ] && command -v sketchybar >/dev/null; then
   sketchybar --reload

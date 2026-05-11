@@ -4,10 +4,11 @@ sketchybar --add item dnd right \
 	--set dnd \
 	update_freq=10 \
 	drawing=off \
-	label="Focus" \
-	label.color="$RED" \
-	label.padding_left=10 \
-	label.padding_right=10 \
+	icon="" \
+	icon.color="$RED" \
+	icon.padding_left=6 \
+	icon.padding_right=6 \
+	label.drawing=off \
 	background.height=26 \
 	background.corner_radius="$CORNER_RADIUS" \
 	background.padding_right=5 \
