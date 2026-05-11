@@ -221,9 +221,9 @@ stow -R zsh     # Relink (useful after making changes)
 ### skhd Keybinds
 
 Modifier names: `alt` = Option, `cmd` = Command, `ctrl` = Control, `shift` = Shift.
-Hyper-style bindings use `shift + ctrl + alt + cmd`.
+`hyper` means `shift + ctrl + alt + cmd`.
 
-Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `shift + ctrl + alt + cmd + h`. It also swaps the global `Fn` key and left `Control`.
+Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `hyper + h`. It also swaps the global `Fn` key and left `Control`.
 
 **Launch:**
 - `alt + return`: open WezTerm
@@ -238,20 +238,20 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `ctrl + 1..9`: focus space 1..9
 
 **Layout:**
-- `shift + ctrl + alt + cmd + e`: balance windows
-- `shift + ctrl + alt + cmd + r`: rotate layout
-- `shift + ctrl + alt + cmd + y`: mirror y-axis
-- `shift + ctrl + alt + cmd + x`: mirror x-axis
-- `shift + ctrl + alt + cmd + m`: yabai zoom fullscreen
+- `hyper + e`: balance windows
+- `hyper + r`: rotate layout
+- `hyper + y`: mirror y-axis
+- `hyper + x`: mirror x-axis
+- `hyper + m`: yabai zoom fullscreen
 - `shift + alt + f`: native macOS fullscreen
-- `shift + ctrl + alt + cmd + t`: toggle floating centered window
+- `hyper + t`: toggle floating centered window
 
 **Move windows:**
-- `shift + ctrl + alt + cmd + h/j/k/l`: swap west/south/north/east
+- `hyper + h/j/k/l`: swap west/south/north/east
 - `ctrl + alt + h/j/k/l`: warp west/south/north/east
-- `shift + ctrl + alt + cmd + s/g`: move to display west/east
-- `shift + ctrl + alt + cmd + p/n`: move to previous/next space
-- `shift + ctrl + alt + cmd + 1..7`: move to space 1..7
+- `hyper + s/g`: move to display west/east
+- `hyper + p/n`: move to previous/next space
+- `hyper + 1..7`: move to space 1..7
 - `shift + alt + 1..9`: create missing spaces up to 1..9, move the focused window there, follow, and re-focus the window
 - `shift + alt + p`: move to previous space and follow
 - `shift + alt + n`: create new space, move focused window there, reload SketchyBar
