@@ -56,9 +56,6 @@ yabai -m rule --add app="^QuickTime Player$" manage=off
 yabai -m rule --add app="^Disk Utility$" manage=off
 yabai -m rule --add app="^Archive Utility$" manage=off
 
-# Put the terminal on Space 1 when possible.
-yabai -m rule --add app="^WezTerm$" space=^1
-
 # SketchyBar occupies the top edge; top_padding above keeps tiled windows clear.
 # yabai -m config external_bar all:40:0
 

@@ -47,7 +47,7 @@ install_brew() {
 setup_macos() {
   info "Installing macOS packages..."
   install_brew
-  brew install git zsh tmux eza zoxide bat neovim stow node
+  brew install git zsh tmux eza zoxide bat neovim stow node jq
   brew install asmvik/formulae/yabai asmvik/formulae/skhd
   brew tap FelixKratz/formulae
   brew install sketchybar switchaudio-osx nowplaying-cli lua
@@ -67,13 +67,19 @@ setup_macos() {
   fi
 }
 
+set_macos_defaults() {
+  info "Applying macOS defaults..."
+  defaults write com.apple.dock AppleSpacesSwitchOnActivate -bool false
+  killall Dock >/dev/null 2>&1 || true
+}
+
 setup_linux() {
   info "Installing Linux packages..."
   sudo apt update -q
   sudo apt install -y git zsh tmux stow curl wget build-essential
 
   install_brew
-  brew install neovim eza zoxide bat node
+  brew install neovim eza zoxide bat node jq
 }
 
 # ── Common setup (all platforms) ─────────────────────────────────────────────
@@ -131,7 +137,7 @@ stow_configs() {
   cd "$DOTFILES_DIR"
   stow zsh tmux
   if [[ "$OS" == "macos" ]]; then
-    stow wezterm yabai skhd sketchybar karabiner
+    stow wezterm yabai skhd sketchybar karabiner wallpapers
   fi
   success "Configs stowed"
 }
@@ -185,7 +191,10 @@ main() {
 
   set_default_shell
 
-  [[ "$OS" == "macos" ]] && start_macos_services
+  if [[ "$OS" == "macos" ]]; then
+    set_macos_defaults
+    start_macos_services
+  fi
 
   echo ""
   success "Done! Next steps:"

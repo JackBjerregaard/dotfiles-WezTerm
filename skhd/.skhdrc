@@ -2,8 +2,9 @@
 # "Hyper" means ctrl + alt + cmd in this file.
 # "Shift + Hyper" means shift + ctrl + alt + cmd.
 
-# Launch WezTerm.
-alt - return : open -na /Applications/WezTerm.app && osascript -e 'tell application "WezTerm" to activate'
+# Launch apps on current space.
+alt - return : "$HOME/dotfiles/scripts/open-app-current-space.sh" WezTerm /Applications/WezTerm.app
+alt - b : "$HOME/dotfiles/scripts/open-safari-current-space.sh"
 
 # Changing focus.
 alt - j : yabai -m window --focus south

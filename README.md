@@ -6,14 +6,16 @@ Terminal and system configuration managed with [GNU Stow](https://www.gnu.org/so
 
 | Config | Description |
 |--------|-------------|
-| `zsh/` | Zsh + Oh My Zsh + Powerlevel10k |
-| `tmux/` | Tmux + TPM |
-| `wezterm/` | WezTerm terminal emulator |
-| `sketchybar/` | macOS status bar |
-| `yabai/` | macOS tiling window manager (macOS only) |
-| `skhd/` | macOS hotkey daemon (macOS only) |
-| `karabiner/` | Karabiner-Elements keyboard remaps (macOS only) |
-| `claude/` | Claude AI settings & skills |
+| `zsh/` | Zsh, Oh My Zsh, Powerlevel10k, zsh-vi-mode, shell aliases, PATH setup, RISC-V helpers |
+| `tmux/` | Tmux prefix/keybinds, TPM, navigation/session plugins, Tokyo Night theme |
+| `wezterm/` | WezTerm theme, fonts, opacity, WSL default domain, close/scrollback keybinds |
+| `sketchybar/` | macOS status bar, widgets, plugins, helper binaries, shared style variables |
+| `yabai/` | macOS tiling window manager, signals, rules, spacing, opacity/focus behavior |
+| `skhd/` | macOS hotkey daemon for app launching, focus, spaces, layout, moving, resizing, services |
+| `karabiner/` | Karabiner-Elements keyboard remaps for Caps Lock Hyper and Fn/Control swap |
+| `scripts/` | Bootstrap installer, npm global installer, yabai/skhd helper scripts |
+| `wallpapers/` | Wallpaper collections stowed into `~/Pictures/Wallpapers` |
+| `npm-global-packages.txt` | Global npm packages installed by `scripts/install-npm-globals.sh` |
 
 ---
 
@@ -42,7 +44,7 @@ Or follow the manual steps below for your platform.
 
 **2. Install packages:**
 ```bash
-brew install git zsh tmux eza zoxide bat neovim stow node
+brew install git zsh tmux eza zoxide bat neovim stow node jq
 brew install asmvik/formulae/yabai asmvik/formulae/skhd
 brew tap FelixKratz/formulae
 brew install sketchybar switchaudio-osx nowplaying-cli lua
@@ -82,7 +84,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 **3. Install tools via brew:**
 ```bash
-brew install neovim eza zoxide bat node
+brew install neovim eza zoxide bat node jq
 ```
 
 **4. Continue to [Common Setup](#common-setup)**
@@ -160,7 +162,7 @@ git clone git@github.com:JackBjerregaard/neovim-config.git ~/.config/nvim
 cd ~/dotfiles
 
 # macOS — all configs:
-stow zsh tmux wezterm yabai skhd sketchybar karabiner
+stow zsh tmux wezterm yabai skhd sketchybar karabiner wallpapers
 
 # Linux / WSL — zsh + tmux only (skip macOS-only targets):
 stow zsh tmux
@@ -204,6 +206,15 @@ skhd --restart-service
 sketchybar --reload
 ```
 
+The install script also applies this macOS default:
+
+```bash
+defaults write com.apple.dock AppleSpacesSwitchOnActivate -bool false
+killall Dock
+```
+
+That keeps macOS from switching Spaces automatically when an app is activated.
+
 ---
 
 ## Stow Usage
@@ -218,6 +229,15 @@ stow -R zsh     # Relink (useful after making changes)
 
 ## Window Management (macOS)
 
+The macOS desktop setup is split across:
+
+- `yabai/.yabairc`: tiling behavior, signals, padding/gaps, opacity, mouse behavior, app rules
+- `skhd/.skhdrc`: keyboard shortcuts that drive yabai, app launching, and service reloads
+- `karabiner/.config/karabiner/karabiner.json`: low-level keyboard remaps used by the skhd Hyper chords
+- `scripts/yabai-*.sh` and `scripts/open-*.sh`: helper commands used by the skhd shortcuts
+
+Several helpers use `jq` to query yabai JSON output.
+
 ### skhd Keybinds
 
 Modifier names: `alt` = Option, `cmd` = Command, `ctrl` = Control, `shift` = Shift.
@@ -228,7 +248,8 @@ Caps Lock emits `shift + ctrl + alt + cmd`, and the main Hyper window actions ac
 Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `hyper + h`. It also swaps the global `Fn` key and left `Control`.
 
 **Launch:**
-- `alt + return`: open WezTerm and focus it
+- `alt + return`: open a new WezTerm window on the current space and focus it
+- `alt + b`: open a new Safari window on the current space and focus it
 
 **Focus windows:**
 - `alt + h/j/k/l`: focus west/south/north/east
@@ -269,11 +290,100 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `ctrl + alt + r`: restart yabai and skhd, reload SketchyBar
 - `cmd + ctrl + s`: reload SketchyBar
 
+### skhd Helper Scripts
+
+- `scripts/open-app-current-space.sh <app-name> [app-path]`: opens a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + return` for WezTerm.
+- `scripts/open-safari-current-space.sh`: creates a new Safari document/window, keeps it on the current yabai space, then focuses it. Used by `alt + b`.
+- `scripts/yabai-focus-current-space-window.sh [window-id]`: focuses the preferred window id, or the best visible window on the current space. Used after space/display changes and window moves.
+- `scripts/yabai-move-window-to-display.sh <west|east|north|south|prev|next>`: moves the focused window to a display, follows it, then re-focuses the window.
+- `scripts/yabai-move-window-to-relative-space.sh <prev|next>`: moves the focused window to the previous/next space, follows it, then re-focuses the window.
+- `scripts/yabai-move-window-to-space.sh <space-index>`: creates missing spaces up to the target index, moves the focused window there, follows it, re-focuses it, and reloads SketchyBar if spaces were created.
+- `scripts/yabai-destroy-empty-spaces.sh`: destroys every space with no visible non-Finder user windows, reloads SketchyBar, then focuses a window on the current space. This avoids Finder's desktop/background entry making an empty space look occupied.
+
+### yabai Behavior
+
+- Layout: BSP tiling with `second_child` placement, focused insertion point, automatic split type, 50/50 split ratio, and manual balancing.
+- Spacing: 10px top padding, 8px bottom/left/right padding, and 8px gaps.
+- Focus: mouse follows focus, focus does not follow mouse, and focus is repaired after window destruction, minimization, app termination, space changes, and display changes.
+- Mouse: hold `ctrl` to move/resize windows; mouse drop swaps windows.
+- Visuals: window shadows off, active windows at full opacity, inactive windows at 90% opacity, quick animations, and skipped focus animation.
+- SketchyBar integration: triggers window focus updates when windows focus or titles change.
+- Scripting addition: attempts `sudo -n yabai --load-sa` on startup and after Dock restarts. Configure sudoers/SIP separately if needed.
+- Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, Disk Utility, and Archive Utility are unmanaged/floating.
+
+### Karabiner
+
+- Caps Lock: tap for Escape, hold for `shift + ctrl + alt + cmd` Hyper.
+- Fn and left Control are swapped globally.
+- The virtual keyboard type is ANSI.
+
 ### SketchyBar
 
 Config lives at `~/.config/sketchybar/sketchybarrc` (managed from `~/dotfiles/sketchybar/.config/sketchybar/`).
 
-Included widgets: spaces 1–10 with app icons, focused app name, app menu/space toggle, media artwork and playback popup, Wi-Fi SSID and details popup, volume percentage/scroll control/output picker, CPU graph, battery percentage and time estimate, date and time.
+Active widgets: spaces with app icons, focused app name, focused window title, DND, weather, volume, battery, calendar, and clock.
+
+The bar uses shared colors and dimensions from `variables.sh`, app icons from `icon_map.sh`/`helpers/app_icons.lua`, item definitions from `items/`, and runtime scripts from `plugins/`. Helper binaries live under `helpers/event_providers/` and `helpers/menus/`.
+
+The active item load order is:
+
+- Left: spaces, front app, window title
+- Right: clock, calendar, battery, volume, weather, DND
+
+`sketchybarrc` enables hotload, runs an initial update, and starts `sketchybar-toggle`.
+
+---
+
+## Terminal Environment
+
+### Zsh
+
+- Loads Powerlevel10k instant prompt first.
+- Uses Oh My Zsh with `git` and `zsh-vi-mode`.
+- Sets `jk` as the zsh-vi-mode insert-mode escape chord.
+- Loads Homebrew shellenv on macOS and Linux/WSL.
+- Adds local bin paths, npm globals, .NET tools, Postgres.app tools on macOS, and Linuxbrew PostgreSQL clients when present.
+- Loads Homebrew zsh autosuggestions and syntax highlighting when installed.
+- Binds Up/Down and `Ctrl+P`/`Ctrl+N` to history search, and `Ctrl+F` to accept autosuggestions.
+- Stores history in `~/.zhistory`, shares history, expires duplicates first, ignores duplicates, and verifies history expansion.
+- Aliases `ls` to `eza --icons=always`, `cd` to `z` when zoxide is available, and includes a `sync-wez` helper to copy the live WezTerm config back to this repo.
+- Configures NVM, OpenJDK on macOS, Bun on Linux/WSL, and a Linux/WSL `claude-mem` helper.
+
+### Tmux
+
+- Prefix is `Ctrl+A`; `Ctrl+B` is unbound.
+- Windows and panes start at index 1.
+- Splits: `prefix |` horizontal and `prefix -` vertical.
+- Reload: `prefix r`.
+- Pane resize: `prefix h/j/k/l` by 2 cells, `prefix Option+h/j/k/l` by 10 cells.
+- Zoom pane: `prefix m`.
+- Attach with current pane path: `prefix Option+c`.
+- Mouse support is enabled.
+- Copy mode uses vi keys: `v` starts selection and `y` copies.
+- Escape time is reduced for fast Neovim mode switching.
+- Plugins: TPM, vim-tmux-navigator, tmux-resurrect, tmux-continuum, and tmux-tokyo-night.
+- Resurrect captures pane contents; continuum automatic restore is off; `prefix Ctrl+R` restores manually.
+
+### WezTerm
+
+- Uses a custom dark blue/green palette with MesloLGS Nerd Font Mono.
+- Hides the tab bar, keeps resize-only window decorations, and uses 95% opacity.
+- macOS uses font size 16 and background blur 10; other platforms use font size 12.
+- Windows defaults to the `WSL:Ubuntu` domain.
+- `Ctrl+Shift+K`: clear scrollback and viewport.
+- `Cmd+W` and `Ctrl+Shift+W`: close the current pane without confirmation.
+
+---
+
+## Scripts
+
+- `scripts/install.sh`: detects macOS, Linux, or WSL; installs packages; installs Oh My Zsh, Powerlevel10k, TPM, zsh-vi-mode, and the external Neovim config; stows configs; installs npm globals; sets zsh as the default shell; and starts macOS services.
+- `scripts/install-npm-globals.sh`: reads `npm-global-packages.txt`, sets npm's global prefix to `~/.npm-global` unless `NPM_CONFIG_PREFIX` is set, and installs the listed packages globally.
+
+Global npm packages currently listed:
+
+- `@openai/codex`
+- `tree-sitter-cli`
 
 ---
 
