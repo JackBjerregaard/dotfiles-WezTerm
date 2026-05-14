@@ -9,11 +9,13 @@ yabai -m signal --add event=window_focused action="sketchybar --trigger window_f
 yabai -m signal --add event=window_title_changed action="sketchybar --trigger window_focus"
 
 focus_window_script="$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
+unzoom_space_script="$HOME/dotfiles/scripts/yabai-unzoom-space.sh"
 yabai -m signal --add event=window_destroyed action="$focus_window_script"
 yabai -m signal --add event=window_minimized action="$focus_window_script"
 yabai -m signal --add event=application_terminated action="$focus_window_script"
 yabai -m signal --add event=space_changed action="$focus_window_script"
 yabai -m signal --add event=display_changed action="$focus_window_script"
+yabai -m signal --add event=window_created action="$unzoom_space_script \$YABAI_WINDOW_ID"
 
 yabai -m config layout bsp
 yabai -m config window_placement second_child

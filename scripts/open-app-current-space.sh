@@ -21,6 +21,8 @@ if [ -z "$current_space" ]; then
   exit 0
 fi
 
+"$HOME/dotfiles/scripts/yabai-unzoom-space.sh" "" "$current_space"
+
 existing_window_ids="$(
   yabai -m query --windows 2>/dev/null |
     jq -c --arg app_name "$app_name" '[.[] | select(.app == $app_name) | .id]' 2>/dev/null ||
