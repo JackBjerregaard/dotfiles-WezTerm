@@ -22,6 +22,12 @@ yabai -m config split_ratio 0.50
 yabai -m config split_type auto
 yabai -m config auto_balance off
 
+# Existing spaces can keep a floating layout across reloads; bring them back
+# under bsp so newly opened windows are tiled consistently.
+yabai -m query --spaces | jq -r '.[] | select(."is-native-fullscreen" == false) | .index' | while read -r space; do
+  yabai -m space "$space" --layout bsp
+done
+
 # Keep windows near the SketchyBar, with a little more side and bottom breathing room.
 yabai -m config top_padding 10
 yabai -m config bottom_padding 8
