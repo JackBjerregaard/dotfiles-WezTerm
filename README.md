@@ -16,6 +16,7 @@ Terminal and system configuration managed with [GNU Stow](https://www.gnu.org/so
 | `scripts/` | Bootstrap installer, npm global installer, yabai/skhd helper scripts |
 | `wallpapers/` | Wallpaper collections stowed into `~/Pictures/Wallpapers` |
 | `npm-global-packages.txt` | Global npm packages installed by `scripts/install-npm-globals.sh` |
+| `KEYBINDS.md` | Cross-platform keybind cheatsheet for macOS/yabai and Linux/Hyprland |
 
 ---
 
@@ -227,6 +228,92 @@ stow -R zsh     # Relink (useful after making changes)
 
 ---
 
+## Keybind Cheatsheet
+
+See [`KEYBINDS.md`](KEYBINDS.md) for the consolidated macOS/yabai and Linux/Hyprland shortcut reference.
+
+The cross-platform model is:
+
+- macOS `alt` maps to Linux `Super` for app launching, window focus, and workspace navigation.
+- macOS `hyper` maps to Linux `Super + Shift` for moving windows and workspaces.
+- macOS numbered Spaces stay on `ctrl + 1..9` to avoid `alt + number` text-entry conflicts.
+- macOS Spaces are the same workflow concept as Hyprland workspaces.
+- macOS/yabai displays are the same hardware concept as Hyprland monitors.
+
+---
+
+## Window Management (Linux / Hyprland)
+
+The active Linux desktop config currently lives at `~/.config/hypr/hyprland.conf`.
+
+Hyprland terminology:
+
+- Workspaces are virtual desktops, equivalent to yabai/macOS Spaces.
+- Monitors are physical screens, equivalent to yabai displays.
+- The Linux setup uses `Super` as the main window-manager modifier.
+- Window movement uses `Super + Shift`.
+- Monitor movement uses `Super + Ctrl` so it does not collide with tile movement.
+- Monitor movement is incremental: previous/next active monitor, so it still works when one display is off.
+- Monitor geometry is configured left-to-right as `DP-2` at `0x0`, `DP-3` at `1080x240`, and `DP-1` at `3640x240`. `DP-2` is rotated with `transform, 1`, and the centered offsets keep the bar/visual layout aligned.
+
+### Hyprland Keybinds
+
+**Launch:**
+- `super + return`: open WezTerm
+- `super + d`: app launcher through Rofi
+- `super + b`: open Chrome
+
+**Window state:**
+- `super + q`: close active window
+- `super + f`: fullscreen active window
+- `super + v`: toggle floating
+- `super + shift + escape`: exit Hyprland
+
+**Focus windows:**
+- `super + h/j/k/l`: focus left/down/up/right
+
+**Move windows inside the layout:**
+- `super + shift + h/j/k/l`: move active window left/down/up/right
+
+**Focus workspaces:**
+- `super + 1..9`: focus workspace 1..9
+- `super + p/n`: previous/next workspace
+
+**Move windows to workspaces:**
+- `super + shift + 1..9`: move active window to workspace 1..9
+- `super + shift + p/n`: move active window to previous/next workspace
+
+**Monitors:**
+- `super + ctrl + h/l`: focus previous/next monitor
+- `super + ctrl + shift + h/l`: move active window to previous/next monitor
+- `super + ctrl + shift + f`: resize active window to 90% of the current monitor
+- `super + ctrl + shift + c`: center active floating window
+
+**Mouse:**
+- `super + left mouse drag`: move window
+- `super + right mouse drag`: resize window
+
+**Utilities:**
+- `print`: region screenshot with `grim`, `slurp`, and `swappy`
+- `super + shift + s`: region screenshot with `grim`, `slurp`, and `swappy`
+- `super + c`: clipboard history through `cliphist`, `rofi`, and `wl-copy`
+
+**Media keys:**
+- Volume keys use `pamixer`
+- Playback keys use `playerctl`
+- Brightness keys use `brightnessctl`
+
+### Hyprland Notes
+
+- `super + q` intentionally means close, matching the preferred Linux workflow.
+- `super + m` is no longer used for exit; exiting moved to `super + shift + escape` to avoid accidental session termination.
+- Screenshot is on `super + shift + s`, leaving monitor movement on the vim-direction layer.
+- Monitor bindings use Hyprland's directional monitor targets, `mon:l` and `mon:r`, to move left/right through active monitors.
+- Floating windows keep their size when moved between monitors. If a moved floating window does not fit, use `super + ctrl + shift + f` and then `super + ctrl + shift + c`.
+- Primeagen/Omarchy-inspired additions that were adopted: move-window-to-workspace bindings, mouse move/resize, and `super + shift + s` screenshot.
+
+---
+
 ## Window Management (macOS)
 
 The macOS desktop setup is split across:
@@ -250,6 +337,7 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 **Launch:**
 - `alt + return`: open a new WezTerm window on the current space and focus it
 - `alt + b`: open a new Safari window on the current space and focus it
+- `alt + q`: close the active yabai window, mirroring Linux `super + q`
 
 **Focus windows:**
 - `alt + h/j/k/l`: focus west/south/north/east

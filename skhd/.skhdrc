@@ -1,10 +1,17 @@
 # Starter skhd config for yabai.
+# Cross-platform model:
+# - macOS alt maps to Linux Super for app launch, focus, and workspace navigation.
+# - macOS Hyper maps to Linux Super + Shift for moving windows/workspaces.
+# - Numbered spaces stay on ctrl to avoid alt-number text-entry conflicts.
 # "Hyper" means ctrl + alt + cmd in this file.
 # "Shift + Hyper" means shift + ctrl + alt + cmd.
 
 # Launch apps on current space.
 alt - return : "$HOME/dotfiles/scripts/open-app-current-space.sh" WezTerm /Applications/WezTerm.app
 alt - b : "$HOME/dotfiles/scripts/open-safari-current-space.sh"
+
+# Close active window.
+alt - q : yabai -m window --close
 
 # Changing focus.
 alt - j : yabai -m window --focus south
