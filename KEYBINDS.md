@@ -25,9 +25,13 @@ Notes:
 |----------|-------|-------|
 | Open terminal | `alt + return` | `Super + return` |
 | Open browser | `alt + b` | `Super + b` |
+| Open YouTube in Brave | Not currently bound | `Super + y` |
 | Close active window | `alt + q` or native app shortcuts | `Super + q` |
+| Close all windows | Native app/session shortcuts | `Super + Shift + q` |
 | Focus window left/down/up/right | `alt + h/j/k/l` | `Super + h/j/k/l` |
-| Move/swap window left/down/up/right | `hyper + h/j/k/l` | `Super + Shift + h/j/k/l` |
+| Move/swap window left/up/right | `hyper + h/k/l` | `Super + Shift + h/k/l` |
+| Move/swap window down | `hyper + j` | Replaced by Linux split toggle |
+| Rotate/swap split layout | `hyper + r` | `Super + Shift + r` |
 | Previous/next workspace | `alt + p/n` | `Super + p/n` |
 | Focus numbered workspace | `ctrl + 1..9` | `Super + 1..9` |
 | Move window to numbered workspace | `hyper + 1..9` | `Super + Shift + 1..9` |
@@ -37,7 +41,7 @@ Notes:
 
 ## Linux / Hyprland
 
-Active config: `~/.config/hypr/hyprland.conf`.
+Managed config: `hypr/.config/hypr/hyprland.conf`, stowed to `~/.config/hypr/hyprland.conf`.
 
 ### Applications
 
@@ -46,15 +50,19 @@ Active config: `~/.config/hypr/hyprland.conf`.
 | `Super + return` | Open WezTerm |
 | `Super + d` | Open Rofi app launcher |
 | `Super + b` | Open Chrome |
+| `Super + y` | Open YouTube in Brave |
 
 ### Windows
 
 | Key | Action |
 |-----|--------|
 | `Super + q` | Close active window |
+| `Super + Shift + q` | Safely ask all applications to close |
 | `Super + f` | Fullscreen active window |
 | `Super + v` | Toggle floating |
+| `Super + m` | Exit Hyprland only when no windows are open |
 | `Super + Shift + Escape` | Exit Hyprland |
+| `Super + Shift + c` | Dismiss all notifications |
 
 ### Tile Focus And Movement
 
@@ -65,9 +73,10 @@ Active config: `~/.config/hypr/hyprland.conf`.
 | `Super + k` | Focus up |
 | `Super + l` | Focus right |
 | `Super + Shift + h` | Move active window left |
-| `Super + Shift + j` | Move active window down |
+| `Super + Shift + j` | Toggle Dwindle split direction for the focused part of the layout |
 | `Super + Shift + k` | Move active window up |
 | `Super + Shift + l` | Move active window right |
+| `Super + Shift + r` | Swap the two halves of the focused Dwindle split |
 
 ### Workspaces
 
@@ -92,6 +101,8 @@ These are Linux-focused because the Mac setup is normally used on a single lapto
 | `Super + Ctrl + Shift + l` | Move active window to monitor on the right |
 | `Super + Ctrl + Shift + f` | Resize active window to 90% of the current monitor |
 | `Super + Ctrl + Shift + c` | Center active floating window |
+| `Super + Ctrl + Shift + m` | Middle monitor off profile: disable `DP-3`, move `DP-1` next to `DP-2` |
+| `Super + Ctrl + Alt + m` | All monitors on profile: restore `DP-3`, move `DP-1` back right |
 
 ### Mouse
 

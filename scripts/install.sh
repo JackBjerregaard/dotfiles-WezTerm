@@ -27,6 +27,15 @@ detect_os() {
 OS=$(detect_os)
 info "Detected OS: $OS"
 
+detect_linux_id() {
+  if [[ -r /etc/os-release ]]; then
+    . /etc/os-release
+    echo "${ID:-unknown}"
+  else
+    echo "unknown"
+  fi
+}
+
 # ── Package managers ──────────────────────────────────────────────────────────
 
 install_brew() {
@@ -75,11 +84,24 @@ set_macos_defaults() {
 
 setup_linux() {
   info "Installing Linux packages..."
-  sudo apt update -q
-  sudo apt install -y git zsh tmux stow curl wget build-essential
+  local linux_id
+  linux_id="$(detect_linux_id)"
 
-  install_brew
-  brew install neovim eza zoxide bat node jq
+  case "$linux_id" in
+    arch)
+      sudo pacman -Syu --needed git zsh tmux stow curl wget base-devel
+      ;;
+    ubuntu | debian)
+      sudo apt update -q
+      sudo apt install -y git zsh tmux stow curl wget build-essential
+
+      install_brew
+      brew install neovim eza zoxide bat node jq
+      ;;
+    *)
+      warn "Unsupported Linux distro '$linux_id' — install packages manually, then stow configs"
+      ;;
+  esac
 }
 
 # ── Common setup (all platforms) ─────────────────────────────────────────────
@@ -135,9 +157,12 @@ setup_nvim() {
 stow_configs() {
   info "Stowing configs..."
   cd "$DOTFILES_DIR"
-  stow zsh tmux
+  stow -t "$HOME" zsh tmux
+  if [[ "$OS" == "linux" || "$OS" == "wsl" ]]; then
+    stow -t "$HOME" linux hypr waybar
+  fi
   if [[ "$OS" == "macos" ]]; then
-    stow wezterm yabai skhd sketchybar karabiner wallpapers
+    stow -t "$HOME" wezterm yabai skhd sketchybar karabiner wallpapers
   fi
   success "Configs stowed"
 }

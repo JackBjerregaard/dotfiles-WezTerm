@@ -13,8 +13,12 @@ Terminal and system configuration managed with [GNU Stow](https://www.gnu.org/so
 | `yabai/` | macOS tiling window manager, signals, rules, spacing, opacity/focus behavior |
 | `skhd/` | macOS hotkey daemon for app launching, focus, spaces, layout, moving, resizing, services |
 | `karabiner/` | Karabiner-Elements keyboard remaps for Caps Lock Hyper and Fn/Control swap |
+| `linux/` | Linux XDG defaults such as browser/application associations |
+| `hypr/` | Linux Hyprland compositor config, window-management keybinds, monitor profiles, helper scripts |
+| `waybar/` | Linux Waybar status bar config and styling |
 | `scripts/` | Bootstrap installer, npm global installer, yabai/skhd helper scripts |
 | `wallpapers/` | Wallpaper collections stowed into `~/Pictures/Wallpapers` |
+| `packages/` | Optional Arch package reference lists for recreating a similar desktop |
 | `npm-global-packages.txt` | Global npm packages installed by `scripts/install-npm-globals.sh` |
 | `KEYBINDS.md` | Cross-platform keybind cheatsheet for macOS/yabai and Linux/Hyprland |
 
@@ -71,24 +75,29 @@ cd /tmp/SbarLua && make install
 
 ### Linux (Native)
 
-**1. Install system packages:**
+**Arch Linux:**
+```bash
+sudo pacman -Syu --needed git zsh tmux stow curl wget base-devel
+```
+
+**Debian / Ubuntu:**
 ```bash
 sudo apt update
 sudo apt install -y git zsh tmux stow curl wget build-essential
 ```
 
-**2. Install Homebrew for Linux** (recommended — provides newer tool versions):
+**Install Homebrew for Linux on Debian / Ubuntu** (recommended — provides newer tool versions):
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 ```
 
-**3. Install tools via brew:**
+**Install tools via brew on Debian / Ubuntu:**
 ```bash
 brew install neovim eza zoxide bat node jq
 ```
 
-**4. Continue to [Common Setup](#common-setup)**
+Continue to [Common Setup](#common-setup).
 
 > Window management tools and keyboard remaps (yabai, skhd, sketchybar, karabiner) are macOS-only — skip those stow targets.
 
@@ -165,8 +174,8 @@ cd ~/dotfiles
 # macOS — all configs:
 stow zsh tmux wezterm yabai skhd sketchybar karabiner wallpapers
 
-# Linux / WSL — zsh + tmux only (skip macOS-only targets):
-stow zsh tmux
+# Linux / WSL — shell, terminal, and Linux desktop configs:
+stow zsh tmux linux hypr waybar
 ```
 
 **7. Install npm global packages:**
@@ -244,7 +253,7 @@ The cross-platform model is:
 
 ## Window Management (Linux / Hyprland)
 
-The active Linux desktop config currently lives at `~/.config/hypr/hyprland.conf`.
+The Linux desktop config is managed from `hypr/.config/hypr/hyprland.conf` and stowed to `~/.config/hypr/hyprland.conf`.
 
 Hyprland terminology:
 
@@ -262,18 +271,26 @@ Hyprland terminology:
 - `super + return`: open WezTerm
 - `super + d`: app launcher through Rofi
 - `super + b`: open Chrome
+- `super + y`: open YouTube in Brave
 
 **Window state:**
 - `super + q`: close active window
+- `super + shift + q`: safely ask all applications to close
 - `super + f`: fullscreen active window
 - `super + v`: toggle floating
+- `super + m`: exit Hyprland only when no windows are open
 - `super + shift + escape`: exit Hyprland
+- `super + shift + c`: dismiss all notifications
 
 **Focus windows:**
 - `super + h/j/k/l`: focus left/down/up/right
 
 **Move windows inside the layout:**
-- `super + shift + h/j/k/l`: move active window left/down/up/right
+- `super + shift + h/k/l`: move active window left/up/right
+
+**Layout:**
+- `super + shift + j`: toggle the focused Dwindle split between side-by-side and top-and-bottom
+- `super + shift + r`: swap the two halves of the focused Dwindle split, mirroring the macOS `hyper + r` layout role
 
 **Focus workspaces:**
 - `super + 1..9`: focus workspace 1..9
@@ -288,6 +305,8 @@ Hyprland terminology:
 - `super + ctrl + shift + h/l`: move active window to previous/next monitor
 - `super + ctrl + shift + f`: resize active window to 90% of the current monitor
 - `super + ctrl + shift + c`: center active floating window
+- `super + ctrl + shift + m`: middle monitor off profile; disable `DP-3` and move `DP-1` next to `DP-2`
+- `super + ctrl + alt + m`: all monitors on profile; restore `DP-3` and move `DP-1` back to the right
 
 **Mouse:**
 - `super + left mouse drag`: move window
@@ -306,10 +325,13 @@ Hyprland terminology:
 ### Hyprland Notes
 
 - `super + q` intentionally means close, matching the preferred Linux workflow.
-- `super + m` is no longer used for exit; exiting moved to `super + shift + escape` to avoid accidental session termination.
+- `super + shift + q` uses `~/.config/hypr/scripts/close-all-clients.sh` to send normal close requests to all Hyprland clients.
+- `super + m` is guarded by `~/.config/hypr/scripts/exit-if-empty.sh`, so it only exits when no Hyprland clients are open.
 - Screenshot is on `super + shift + s`, leaving monitor movement on the vim-direction layer.
+- `super + shift + j` is intentionally a Linux Dwindle split toggle now, so it no longer mirrors macOS `hyper + j` swap south.
 - Monitor bindings use Hyprland's directional monitor targets, `mon:l` and `mon:r`, to move left/right through active monitors.
 - Floating windows keep their size when moved between monitors. If a moved floating window does not fit, use `super + ctrl + shift + f` and then `super + ctrl + shift + c`.
+- Physically turning off the middle monitor may leave it active in Hyprland. Use the middle-off monitor profile so mouse and window movement cross directly between the remaining monitors.
 - Primeagen/Omarchy-inspired additions that were adopted: move-window-to-workspace bindings, mouse move/resize, and `super + shift + s` screenshot.
 
 ---
@@ -466,6 +488,8 @@ The active item load order is:
 ## Scripts
 
 - `scripts/install.sh`: detects macOS, Linux, or WSL; installs packages; installs Oh My Zsh, Powerlevel10k, TPM, zsh-vi-mode, and the external Neovim config; stows configs; installs npm globals; sets zsh as the default shell; and starts macOS services.
+- `packages/arch-pacman.txt`: optional native Arch package reference list.
+- `packages/arch-aur.txt`: optional AUR package reference list.
 - `scripts/install-npm-globals.sh`: reads `npm-global-packages.txt`, sets npm's global prefix to `~/.npm-global` unless `NPM_CONFIG_PREFIX` is set, and installs the listed packages globally.
 
 Global npm packages currently listed:
