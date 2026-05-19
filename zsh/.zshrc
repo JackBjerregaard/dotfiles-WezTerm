@@ -1,7 +1,7 @@
 # =============================================================================
 # 1. INSTANT PROMPT (Must remain at the very top)
 # =============================================================================
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+if [[ "$TERM" != "linux" && -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
@@ -12,13 +12,20 @@ export ZSH="$HOME/.oh-my-zsh"
 export LANG=C.utf8
 export LC_ALL=C.utf8
 
+IS_LINUX_TTY=0
+[[ "$TERM" == "linux" ]] && IS_LINUX_TTY=1
+
 # CompSys: Dotnet and Local Binaries
 export PATH="$HOME/opt/bin:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 
 # =============================================================================
 # 3. OH-MY-ZSH CONFIGURATION
 # =============================================================================
-ZSH_THEME="powerlevel10k/powerlevel10k"
+if (( IS_LINUX_TTY )); then
+  ZSH_THEME=""
+else
+  ZSH_THEME="powerlevel10k/powerlevel10k"
+fi
 
 # Plugin Settings
 # Set "jk" to exit Insert Mode immediately (zsh-vi-mode specific)
@@ -85,6 +92,11 @@ plugins=(
 
 if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
   source "$ZSH/oh-my-zsh.sh"
+fi
+
+if (( IS_LINUX_TTY )); then
+  PROMPT='%n@%m:%~%# '
+  RPROMPT=''
 fi
 
 # =============================================================================
@@ -166,7 +178,11 @@ setopt hist_verify
 # =============================================================================
 # 6. ALIASES & TOOLS
 # =============================================================================
-alias ls="eza --icons=always"
+if (( IS_LINUX_TTY )) || ! command -v eza >/dev/null 2>&1; then
+  alias ls="ls --color=auto"
+else
+  alias ls="eza --icons=always"
+fi
 alias sync-wez="cp ~/.wezterm.lua ~/dotfiles/wezterm/.wezterm.lua && echo '✓ WezTerm config synced to dotfiles'"
 
 # --- RISC-V Toolchain (CompSys) ---
@@ -221,7 +237,9 @@ riscv-run() {
 # 7. FINAL INIT
 # =============================================================================
 # P10k Configuration
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+if (( ! IS_LINUX_TTY )); then
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
