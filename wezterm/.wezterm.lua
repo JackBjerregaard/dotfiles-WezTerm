@@ -24,7 +24,7 @@ config.colors = {
 -- config.color_scheme = 'Everforest Dark (Gogh)'
 
 
-config.font = wezterm.font("MesloLGS Nerd Font Mono")
+config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
 config.font_size = 12
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
@@ -36,6 +36,11 @@ config.skip_close_confirmation_for_processes_named = {}
 if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
   config.macos_window_background_blur = 10
   config.font_size = 16
+end
+
+if wezterm.target_triple:find("linux") then
+  config.enable_wayland = false
+  config.front_end = "OpenGL"
 end
 
  -- ==== open WSL:Ubuntu by default (recommended) ====

@@ -83,7 +83,9 @@ plugins=(
   zsh-vi-mode
 )
 
-source $ZSH/oh-my-zsh.sh
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
+fi
 
 # =============================================================================
 # 4. HOMEBREW & OS SPECIFIC SETUP
@@ -99,31 +101,50 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
   fi
 else
-  # Linux (WSL)
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  BREW_PREFIX="/home/linuxbrew/.linuxbrew"
-  alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
-  export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+  # Linux / WSL. Linuxbrew is optional on native Linux.
+  if [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+    export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet/libexec"
+  else
+    BREW_PREFIX=""
+    export DOTNET_ROOT="${DOTNET_ROOT:-$HOME/.dotnet}"
+  fi
+
+  if grep -qi "microsoft" /proc/version 2>/dev/null && [[ -e "/mnt/c/Users/giaco/.wezterm.lua" ]]; then
+    alias wezconfig="nvim /mnt/c/Users/giaco/.wezterm.lua"
+  else
+    alias wezconfig="nvim ~/.wezterm.lua"
+  fi
+
   # PostgreSQL client tools from Linuxbrew, when installed
-  for pg_bin in "$BREW_PREFIX"/opt/{libpq,postgresql,postgresql@18,postgresql@17,postgresql@16}/bin(N); do
-    export PATH="$pg_bin:$PATH"
-    break
-  done
+  if [[ -n "$BREW_PREFIX" ]]; then
+    for pg_bin in "$BREW_PREFIX"/opt/{libpq,postgresql,postgresql@18,postgresql@17,postgresql@16}/bin(N); do
+      export PATH="$pg_bin:$PATH"
+      break
+    done
+  fi
 fi
 
 # Add .NET to PATH
-export PATH="$DOTNET_ROOT:$HOME/.dotnet/tools:$PATH"
+if [[ -n "${DOTNET_ROOT:-}" ]]; then
+  export PATH="$DOTNET_ROOT:$HOME/.dotnet/tools:$PATH"
+fi
 
 # =============================================================================
 # 5. ADDITIONAL ZSH ENHANCEMENTS (Loaded after OMZ)
 # =============================================================================
-# Source Homebrew plugins (Syntax highlighting & Autosuggestions)
-if [[ -f $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-    source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Source shell plugins from Homebrew or distro packages.
+if [[ -n "${BREW_PREFIX:-}" && -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+elif [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
-if [[ -f $BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-    source $BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -n "${BREW_PREFIX:-}" && -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # Keybindings for history search
@@ -217,10 +238,12 @@ else
 
   alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
 
-  # Homebrew .NET 9 (Linuxbrew) — covers both bin and libexec for Fasto
-  export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
-	  export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
-	fi
+  # Homebrew .NET 9 (Linuxbrew) covers both bin and libexec for Fasto when installed.
+  if [[ -d "/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec" ]]; then
+    export DOTNET_ROOT="/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec"
+    export PATH="/home/linuxbrew/.linuxbrew/opt/dotnet@9/bin:/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec:$PATH"
+  fi
+fi
 
 # Initialize Zoxide (Better cd)
 # Keep this at the end so zoxide's shell hook is not overwritten by later setup.
