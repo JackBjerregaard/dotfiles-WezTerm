@@ -36,7 +36,8 @@ Notes:
 | Focus numbered workspace | `ctrl + 1..9` | `Super + 1..9` |
 | Move window to numbered workspace | `hyper + 1..9` | `Super + Shift + 1..9` |
 | Move window previous/next workspace | `hyper + p/n` | `Super + Shift + p/n` |
-| Toggle fullscreen | `hyper + f` | `Super + f` |
+| Toggle native fullscreen | `hyper + f` | `Super + f` |
+| Toggle tiling maximize | `hyper + m` | `Super + m` |
 | Toggle floating | `hyper + t` | `Super + v` |
 
 ## Linux / Hyprland
@@ -58,9 +59,9 @@ Managed config: `hypr/.config/hypr/hyprland.conf`, stowed to `~/.config/hypr/hyp
 |-----|--------|
 | `Super + q` | Close active window |
 | `Super + Shift + q` | Safely ask all applications to close |
-| `Super + f` | Fullscreen active window |
+| `Super + f` | Native fullscreen active window |
+| `Super + m` | Tiling maximize active window |
 | `Super + v` | Toggle floating |
-| `Super + m` | Exit Hyprland only when no windows are open |
 | `Super + Shift + Escape` | Exit Hyprland |
 | `Super + Shift + c` | Dismiss all notifications |
 
@@ -100,9 +101,11 @@ These are Linux-focused because the Mac setup is normally used on a single lapto
 | `Super + Ctrl + Shift + h` | Move active window to monitor on the left |
 | `Super + Ctrl + Shift + l` | Move active window to monitor on the right |
 | `Super + Ctrl + Shift + f` | Resize active window to 90% of the current monitor |
+| `Super + Ctrl + Shift + r` | Reset focused Dwindle split ratio to center |
 | `Super + Ctrl + Shift + c` | Center active floating window |
 | `Super + Ctrl + Shift + m` | Middle monitor off profile: disable `DP-3`, move `DP-1` next to `DP-2` |
 | `Super + Ctrl + Alt + m` | All monitors on profile: restore `DP-3`, move `DP-1` back right |
+| `Super + Ctrl + Alt + Backspace` | Exit Hyprland only when no windows are open |
 
 ### Mouse
 

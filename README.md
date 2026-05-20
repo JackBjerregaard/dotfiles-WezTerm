@@ -279,9 +279,9 @@ Hyprland terminology:
 **Window state:**
 - `super + q`: close active window
 - `super + shift + q`: safely ask all applications to close
-- `super + f`: fullscreen active window
+- `super + f`: native fullscreen active window
+- `super + m`: tiling maximize active window
 - `super + v`: toggle floating
-- `super + m`: exit Hyprland only when no windows are open
 - `super + shift + escape`: exit Hyprland
 - `super + shift + c`: dismiss all notifications
 
@@ -307,9 +307,11 @@ Hyprland terminology:
 - `super + ctrl + h/l`: focus previous/next monitor
 - `super + ctrl + shift + h/l`: move active window to previous/next monitor
 - `super + ctrl + shift + f`: resize active window to 90% of the current monitor
+- `super + ctrl + shift + r`: reset focused Dwindle split ratio to center
 - `super + ctrl + shift + c`: center active floating window
 - `super + ctrl + shift + m`: middle monitor off profile; disable `DP-3` and move `DP-1` next to `DP-2`
 - `super + ctrl + alt + m`: all monitors on profile; restore `DP-3` and move `DP-1` back to the right
+- `super + ctrl + alt + backspace`: exit Hyprland only when no windows are open
 
 **Mouse:**
 - `super + left mouse drag`: move window
@@ -329,7 +331,7 @@ Hyprland terminology:
 
 - `super + q` intentionally means close, matching the preferred Linux workflow.
 - `super + shift + q` uses `~/.config/hypr/scripts/close-all-clients.sh` to send normal close requests to all Hyprland clients.
-- `super + m` is guarded by `~/.config/hypr/scripts/exit-if-empty.sh`, so it only exits when no Hyprland clients are open.
+- `super + m` mirrors macOS `hyper + m` as the tiling maximize toggle. The guarded Hyprland exit moved to `super + ctrl + alt + backspace`, so it only exits when no Hyprland clients are open.
 - Screenshot is on `super + shift + s`, leaving monitor movement on the vim-direction layer.
 - `super + shift + j` is intentionally a Linux Dwindle split toggle now, so it no longer mirrors macOS `hyper + j` swap south.
 - Monitor bindings use Hyprland's directional monitor targets, `mon:l` and `mon:r`, to move left/right through active monitors.
