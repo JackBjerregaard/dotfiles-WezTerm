@@ -5,8 +5,19 @@ hyprctl clients -j | jq -r '.[].address' | while IFS= read -r address; do
   hyprctl dispatch closewindow "address:$address"
 done
 
-sleep 0.2
+sleep 0.5
 
-for process in Discord discord DiscordCanary discordcanary DiscordPTB discordptb; do
-  pkill -TERM -x "$process" 2>/dev/null
+uid="$(id -u)"
+discord_pattern='(^|/)(Discord|discord|DiscordCanary|discordcanary|DiscordPTB|discordptb)([[:space:]]|$)'
+
+pkill -TERM -u "$uid" -f "$discord_pattern" 2>/dev/null
+
+tries=0
+while pgrep -u "$uid" -f "$discord_pattern" >/dev/null 2>&1 && [ "$tries" -lt 20 ]; do
+  tries=$((tries + 1))
+  sleep 0.1
 done
+
+if pgrep -u "$uid" -f "$discord_pattern" >/dev/null 2>&1; then
+  pkill -KILL -u "$uid" -f "$discord_pattern" 2>/dev/null
+fi
