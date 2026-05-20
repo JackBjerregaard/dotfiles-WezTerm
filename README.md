@@ -178,25 +178,28 @@ stow zsh tmux wezterm yabai skhd sketchybar karabiner wallpapers
 stow zsh tmux linux hypr waybar
 ```
 
-**7. Install npm global packages:**
+**7. Install tmux plugins:**
+```bash
+~/.tmux/plugins/tpm/bin/install_plugins
+```
+This installs the machine-local plugin repos listed in `tmux/.tmux.conf`, including PowerKit.
+
+**8. Install npm global packages:**
 ```bash
 ./scripts/install-npm-globals.sh
 ```
 Add packages to `npm-global-packages.txt` to include them in future installs.
 
-**8. Set zsh as default shell:**
+**9. Set zsh as default shell:**
 ```bash
 chsh -s $(which zsh)
 ```
 
-**9. Reload and configure:**
+**10. Reload and configure:**
 ```bash
 exec zsh
 p10k configure      # First time only
 ```
-
-**10. Install tmux plugins:**
-Start tmux, then press `Ctrl+A` then `Shift+I`.
 
 ---
 
@@ -473,7 +476,7 @@ The active item load order is:
 - Mouse support is enabled.
 - Copy mode uses vi keys: `v` starts selection and `y` copies.
 - Escape time is reduced for fast Neovim mode switching.
-- Plugins: TPM, vim-tmux-navigator, tmux-resurrect, tmux-continuum, and tmux-tokyo-night.
+- Plugins: TPM, vim-tmux-navigator, tmux-resurrect, tmux-continuum, and tmux-powerkit.
 - Resurrect captures pane contents; continuum automatic restore is off; `prefix Ctrl+R` restores manually.
 
 ### WezTerm
@@ -489,7 +492,7 @@ The active item load order is:
 
 ## Scripts
 
-- `scripts/install.sh`: detects macOS, Linux, or WSL; installs packages; installs Oh My Zsh, Powerlevel10k, TPM, zsh-vi-mode, and the external Neovim config; stows configs; installs npm globals; sets zsh as the default shell; and starts macOS services.
+- `scripts/install.sh`: detects macOS, Linux, or WSL; installs packages; installs Oh My Zsh, Powerlevel10k, TPM, zsh-vi-mode, and the external Neovim config; stows configs; installs tmux plugins and npm globals; sets zsh as the default shell; and starts macOS services.
 - `packages/arch-pacman.txt`: optional native Arch package reference list.
 - `packages/arch-aur.txt`: optional AUR package reference list.
 - `scripts/install-npm-globals.sh`: reads `npm-global-packages.txt`, sets npm's global prefix to `~/.npm-global` unless `NPM_CONFIG_PREFIX` is set, and installs the listed packages globally.

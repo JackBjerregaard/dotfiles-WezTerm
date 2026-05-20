@@ -167,6 +167,16 @@ stow_configs() {
   success "Configs stowed"
 }
 
+install_tmux_plugins() {
+  local installer="$HOME/.tmux/plugins/tpm/bin/install_plugins"
+  if [[ ! -x "$installer" ]]; then
+    warn "TPM installer not found — skipping tmux plugins"
+    return
+  fi
+  info "Installing tmux plugins..."
+  "$installer" || warn "Could not install tmux plugins — in tmux, press Ctrl+A then Shift+I"
+}
+
 set_default_shell() {
   local zsh_path
   zsh_path="$(command -v zsh)"
@@ -206,6 +216,7 @@ main() {
   setup_zsh_vi_mode
   setup_nvim
   stow_configs
+  install_tmux_plugins
 
   if command -v npm >/dev/null 2>&1; then
     info "Installing npm global packages..."
@@ -225,9 +236,8 @@ main() {
   success "Done! Next steps:"
   echo "  1.  Restart your terminal, or run:  exec zsh"
   echo "  2.  Configure prompt (first time):  p10k configure"
-  echo "  3.  In tmux, install plugins:       Ctrl+A  Shift+I"
   if [[ "$OS" == "macos" ]]; then
-    echo "  4.  Optional Apple fonts (interactive sudo prompt):"
+    echo "  3.  Optional Apple fonts (interactive sudo prompt):"
     echo "        brew install --cask sf-symbols font-sf-mono font-sf-pro"
   fi
 }
