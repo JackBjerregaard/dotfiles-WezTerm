@@ -9,6 +9,7 @@
 # Launch apps on current space.
 alt - return : "$HOME/dotfiles/scripts/open-app-current-space.sh" WezTerm /Applications/WezTerm.app
 alt - b : "$HOME/dotfiles/scripts/open-safari-current-space.sh"
+alt - y : "$HOME/dotfiles/scripts/open-url-current-space.sh" "Brave Browser" "/Applications/Brave Browser.app" https://www.youtube.com
 
 # Close active window.
 alt - q : yabai -m window --close

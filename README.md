@@ -359,6 +359,7 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 **Launch:**
 - `alt + return`: open a new WezTerm window on the current space and focus it
 - `alt + b`: open a new Safari window on the current space and focus it
+- `alt + y`: open YouTube in Brave on the current space and focus it
 - `alt + q`: close the active yabai window, mirroring Linux `super + q`
 
 **Focus windows:**
@@ -404,6 +405,7 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 
 - `scripts/open-app-current-space.sh <app-name> [app-path]`: opens a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + return` for WezTerm.
 - `scripts/open-safari-current-space.sh`: creates a new Safari document/window, keeps it on the current yabai space, then focuses it. Used by `alt + b`.
+- `scripts/open-url-current-space.sh <app-name> <app-path> <url>`: opens a URL in a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + y` for YouTube in Brave.
 - `scripts/yabai-focus-current-space-window.sh [window-id]`: focuses the preferred window id, or the best visible window on the current space. Used after space/display changes and window moves.
 - `scripts/yabai-move-window-to-display.sh <west|east|north|south|prev|next>`: moves the focused window to a display, follows it, then re-focuses the window.
 - `scripts/yabai-move-window-to-relative-space.sh <prev|next>`: moves the focused window to the previous/next space, follows it, then re-focuses the window.

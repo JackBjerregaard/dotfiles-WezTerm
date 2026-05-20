@@ -25,7 +25,7 @@ Notes:
 |----------|-------|-------|
 | Open terminal | `alt + return` | `Super + return` |
 | Open browser | `alt + b` | `Super + b` |
-| Open YouTube in Brave | Not currently bound | `Super + y` |
+| Open YouTube in Brave | `alt + y` | `Super + y` |
 | Close active window | `alt + q` or native app shortcuts | `Super + q` |
 | Close all windows | Native app/session shortcuts | `Super + Shift + q` |
 | Focus window left/down/up/right | `alt + h/j/k/l` | `Super + h/j/k/l` |
@@ -138,6 +138,7 @@ Config files:
 |-----|--------|
 | `alt + return` | Open a new WezTerm window on the current Space and focus it |
 | `alt + b` | Open a new Safari window on the current Space and focus it |
+| `alt + y` | Open YouTube in Brave on the current Space and focus it |
 | `alt + q` | Close active yabai window |
 
 ### Window Focus
