@@ -61,6 +61,36 @@
   opacity: 0.35;
 }
 
+#workspaces button.special {
+  color: #f59e0b;
+  font-weight: 700;
+  border-bottom: 2px solid #f59e0b;
+}
+
+#workspaces button.special.active {
+  color: #fbbf24;
+  text-shadow: 0 0 5px rgba(245, 158, 11, 0.6);
+}
+
+#custom-minimized-workspace {
+  color: #fbbf24;
+  padding: 0 8px;
+  margin: 0 4px;
+  border-bottom: 2px solid #f59e0b;
+  font-weight: 700;
+}
+
+#custom-minimized-workspace.has-minimized {
+  opacity: 0.55;
+  border-bottom-style: dashed;
+}
+
+#custom-minimized-workspace.hidden {
+  padding: 0;
+  margin: 0;
+  border-bottom: none;
+}
+
 #custom-launcher {
   color: #38bdf8;
   padding: 0 12px;

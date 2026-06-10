@@ -282,6 +282,9 @@ Hyprland terminology:
 - `super + f`: native fullscreen active window
 - `super + m`: tiling maximize active window
 - `super + v`: toggle floating
+- `super + -`: minimize active window to the hidden `special:minimized` workspace
+- `super + shift + -`: show or hide the minimized scratchpad workspace
+- `super + ctrl + -`: restore the focused minimized window to the current normal workspace
 - `super + shift + escape`: exit Hyprland
 - `super + shift + c`: dismiss all notifications
 
@@ -332,6 +335,7 @@ Hyprland terminology:
 - `super + q` intentionally means close, matching the preferred Linux workflow.
 - `super + shift + q` uses `~/.config/hypr/scripts/close-all-clients.sh` to send normal close requests to all Hyprland clients.
 - `super + m` mirrors macOS `hyper + m` as the tiling maximize toggle. The guarded Hyprland exit moved to `super + ctrl + alt + backspace`, so it only exits when no Hyprland clients are open.
+- Minimize is implemented with Hyprland special workspace `special:minimized`: send a window with `super + -`, reveal it with `super + shift + -`, then restore the focused minimized window with `super + ctrl + -`.
 - Screenshot is on `super + shift + s`, leaving monitor movement on the vim-direction layer.
 - `super + shift + j` is intentionally a Linux Dwindle split toggle now, so it no longer mirrors macOS `hyper + j` swap south.
 - Monitor bindings use Hyprland's directional monitor targets, `mon:l` and `mon:r`, to move left/right through active monitors.

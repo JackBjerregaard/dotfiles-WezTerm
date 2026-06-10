@@ -39,6 +39,9 @@ Notes:
 | Toggle native fullscreen | `hyper + f` | `Super + f` |
 | Toggle tiling maximize | `hyper + m` | `Super + m` |
 | Toggle floating | `hyper + t` | `Super + v` |
+| Minimize to scratchpad | Native minimize | `Super + -` |
+| Show minimized scratchpad | Mission Control/Dock | `Super + Shift + -` |
+| Restore minimized window | Native unminimize | `Super + Ctrl + -` |
 
 ## Linux / Hyprland
 
@@ -62,6 +65,9 @@ Managed config: `hypr/.config/hypr/hyprland.conf`, stowed to `~/.config/hypr/hyp
 | `Super + f` | Native fullscreen active window |
 | `Super + m` | Tiling maximize active window |
 | `Super + v` | Toggle floating |
+| `Super + -` | Minimize active window to the hidden `special:minimized` workspace |
+| `Super + Shift + -` | Show or hide the minimized scratchpad workspace |
+| `Super + Ctrl + -` | Restore the focused minimized window to the current normal workspace |
 | `Super + Shift + Escape` | Exit Hyprland |
 | `Super + Shift + c` | Dismiss all notifications |
 
