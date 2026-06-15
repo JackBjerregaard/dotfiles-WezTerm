@@ -255,6 +255,7 @@ else
   export PATH="$BUN_INSTALL/bin:$PATH"
 
   alias claude-mem='bun "$HOME/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+  alias bt-keyboard='bluetoothctl connect EB:A8:C1:B8:E8:72'
 
   # Homebrew .NET 9 (Linuxbrew) covers both bin and libexec for Fasto when installed.
   if [[ -d "/home/linuxbrew/.linuxbrew/opt/dotnet@9/libexec" ]]; then
