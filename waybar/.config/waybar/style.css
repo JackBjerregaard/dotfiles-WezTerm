@@ -159,6 +159,7 @@
 #custom-temperature,
 #disk,
 #idle_inhibitor,
+#language,
 #custom-notifications,
 #tray {
   margin: 0 4px;
@@ -187,6 +188,7 @@
 #custom-temperature,
 #disk,
 #idle_inhibitor,
+#language,
 #custom-notifications {
   padding: 0 12px;
   border-radius: 6px;
@@ -271,6 +273,15 @@
 #idle_inhibitor.activated {
   background-color: rgba(240, 171, 252, 0.12);
   text-shadow: 0 0 8px rgba(240, 171, 252, 0.8);
+}
+
+#language {
+  color: #f9a8d4;
+}
+
+#language:hover {
+  background-color: rgba(249, 168, 212, 0.12);
+  text-shadow: 0 0 8px rgba(249, 168, 212, 0.8);
 }
 
 #custom-notifications {

@@ -62,6 +62,12 @@ config.keys = {
     mods = "CMD",
     action = wezterm.action.CloseCurrentPane({ confirm = false }),
   },
+  -- Override Cmd+Q to close without prompting
+  {
+    key = "q",
+    mods = "CMD",
+    action = wezterm.action.CloseCurrentPane({ confirm = false }),
+  },
   -- Also override Ctrl+Shift+W for Windows
   {
     key = "w",

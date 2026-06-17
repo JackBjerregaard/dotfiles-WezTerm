@@ -20,6 +20,7 @@
   "modules-right": [
     "group/tray-expander",
     "idle_inhibitor",
+    "hyprland/language",
     "bluetooth",
     "network",
     "pulseaudio",
@@ -172,6 +173,12 @@
     },
     "tooltip-format-activated": "Idle inhibit on",
     "tooltip-format-deactivated": "Idle inhibit off"
+  },
+
+  "hyprland/language": {
+    "format": "󰌌 {short}",
+    "tooltip-format": "{long}",
+    "on-click": "hyprctl switchxkblayout all next"
   },
 
   "custom/notifications": {
