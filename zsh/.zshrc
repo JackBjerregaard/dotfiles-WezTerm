@@ -186,6 +186,7 @@ fi
 alias sync-wez="cp ~/.wezterm.lua ~/dotfiles/wezterm/.wezterm.lua && echo '✓ WezTerm config synced to dotfiles'"
 alias restart-dots="$HOME/dotfiles/scripts/restart-macos-ui.sh"
 alias restart-wm="$HOME/dotfiles/scripts/restart-macos-ui.sh"
+alias t7-eject="$HOME/dotfiles/scripts/t7-eject.sh"
 
 # --- RISC-V Toolchain (CompSys) ---
 if [[ "$OSTYPE" == "darwin"* ]]; then

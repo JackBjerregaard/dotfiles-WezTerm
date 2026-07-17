@@ -433,7 +433,7 @@ because they need the scripting addition — see "Spaces" below.
 - Visuals: window shadows off, active windows at full opacity, inactive windows at 90% opacity, quick animations, and skipped focus animation.
 - SketchyBar integration: triggers window focus updates when windows focus or titles change.
 - Scripting addition: attempts `sudo -n yabai --load-sa` on startup and after Dock restarts (stderr discarded — it can't succeed with SIP enabled). Configure sudoers/SIP separately if needed.
-- Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, Disk Utility, and Archive Utility are unmanaged/floating.
+- Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, SenPlayer, VeraCrypt, Disk Utility, and Archive Utility are unmanaged/floating.
 
 ### Spaces (static, no SIP required)
 
@@ -501,7 +501,7 @@ The active item load order is:
 - Loads Homebrew zsh autosuggestions and syntax highlighting when installed.
 - Binds Up/Down and `Ctrl+P`/`Ctrl+N` to history search, and `Ctrl+F` to accept autosuggestions.
 - Stores history in `~/.zhistory`, shares history, expires duplicates first, ignores duplicates, and verifies history expansion.
-- Aliases `ls` to `eza --icons=always`, `cd` to `z` when zoxide is available, and includes a `sync-wez` helper to copy the live WezTerm config back to this repo.
+- Aliases `ls` to `eza --icons=always`, `cd` to `z` when zoxide is available, includes a `sync-wez` helper to copy the live WezTerm config back to this repo, and exposes `t7-eject` for the external disk eject helper.
 - Configures NVM, OpenJDK on macOS, Bun on Linux/WSL, and a Linux/WSL `claude-mem` helper.
 
 ### Tmux
@@ -536,6 +536,8 @@ The active item load order is:
 - `packages/arch-pacman.txt`: optional native Arch package reference list.
 - `packages/arch-aur.txt`: optional AUR package reference list.
 - `scripts/install-npm-globals.sh`: reads `npm-global-packages.txt`, sets npm's global prefix to `~/.npm-global` unless `NPM_CONFIG_PREFIX` is set, and installs the listed packages globally.
+- `scripts/t7-eject.sh [volume-name-or-mountpoint]`: macOS/Linux helper for external disks. Defaults to `T7`, lists processes with open files on the disk, asks before force-closing them, then ejects with `diskutil` on macOS or `udisksctl`/`umount` on Linux. The `t7-eject` zsh alias points here.
+- `scripts/t7-eject.ps1 [volume-label]`: native Windows companion for the same workflow. Requires Sysinternals `handle64.exe` or `handle.exe` on `PATH` so Windows can list open file handles before ejecting.
 
 Global npm packages currently listed:
 

@@ -70,6 +70,8 @@ yabai -m rule --add app="^Karabiner-Elements$" manage=off
 yabai -m rule --add app="^1Password$" manage=off
 yabai -m rule --add app="^Preview$" manage=off
 yabai -m rule --add app="^QuickTime Player$" manage=off
+yabai -m rule --add app="^SenPlayer$" manage=off
+yabai -m rule --add app="^VeraCrypt$" manage=off
 yabai -m rule --add app="^Disk Utility$" manage=off
 yabai -m rule --add app="^Archive Utility$" manage=off
 
