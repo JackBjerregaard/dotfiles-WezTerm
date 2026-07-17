@@ -1,21 +1,30 @@
 #!/usr/bin/env bash
 
 # Load the scripting addition when SIP and sudoers are configured. The -n flag
-# prevents startup from hanging if sudoers is not ready yet.
-yabai -m signal --add event=dock_did_restart action="sudo -n yabai --load-sa"
-sudo -n yabai --load-sa
+# prevents startup from hanging if sudoers is not ready yet, and stderr is
+# discarded because with SIP enabled this can never succeed and would otherwise
+# log "sudo: a password is required" on every start. Left in place so the
+# addition loads automatically if SIP is ever partially disabled.
+yabai -m signal --add event=dock_did_restart action="sudo -n yabai --load-sa 2>/dev/null"
+sudo -n yabai --load-sa 2>/dev/null || true
 
 yabai -m signal --add event=window_focused action="sketchybar --trigger window_focus"
 yabai -m signal --add event=window_title_changed action="sketchybar --trigger window_focus"
 
 focus_window_script="$HOME/dotfiles/scripts/yabai-focus-current-space-window.sh"
 unzoom_space_script="$HOME/dotfiles/scripts/yabai-unzoom-space.sh"
+ensure_min_spaces_script="$HOME/dotfiles/scripts/yabai-ensure-min-spaces.sh"
 yabai -m signal --add event=window_destroyed action="$focus_window_script"
 yabai -m signal --add event=window_minimized action="$focus_window_script"
 yabai -m signal --add event=application_terminated action="$focus_window_script"
 yabai -m signal --add event=space_changed action="$focus_window_script"
 yabai -m signal --add event=display_changed action="$focus_window_script"
 yabai -m signal --add event=window_created action="$unzoom_space_script \$YABAI_WINDOW_ID"
+# Keep a fixed set of 9 spaces to match the ctrl/hyper 1..9 keybinds. These are
+# created once by hand in Mission Control (creating them here needs the
+# scripting addition / SIP); this only warns if fewer than 9 exist.
+yabai -m signal --add event=space_destroyed action="$ensure_min_spaces_script 9"
+"$ensure_min_spaces_script" 9
 
 yabai -m config layout bsp
 yabai -m config window_placement second_child

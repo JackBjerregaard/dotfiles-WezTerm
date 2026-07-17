@@ -392,14 +392,14 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `hyper + h/j/k/l`: swap west/south/north/east
 - `ctrl + alt + h/j/k/l`: warp west/south/north/east
 - `hyper + s/g`: move focused window to display west/east and follow it
-- `hyper + 1..9`: move focused window to space 1..9, follow it, and re-focus it
-- `shift + hyper + 1..9`: create missing spaces up to 1..9, move the focused window there, follow, and re-focus the window
-- `hyper + p/n`: move focused window to previous/next space, follow it, and re-focus it
-- `shift + hyper + p`: move focused window to previous space and follow
-- `shift + hyper + n`: create new space, move focused window there, reload SketchyBar
-- `ctrl + alt + n`: create new empty space, focus it, reload SketchyBar
-- `hyper + d`: destroy current space, reload SketchyBar
-- `ctrl + alt + d`: destroy all empty spaces, reload SketchyBar
+- `hyper + 1..9`: move focused window to space 1..9 without following it
+- `shift + hyper + 1..9`: move focused window to space 1..9 and follow
+- `hyper + p/n`: move focused window to previous/next space without following it
+- `shift + hyper + p/n`: move focused window to previous/next space and follow
+
+Space create/destroy binds (`ctrl + alt + n`, `hyper + d`, `ctrl + alt + d`,
+`shift + hyper + n` in its old create form) are commented out in `.skhdrc`
+because they need the scripting addition — see "Spaces" below.
 
 **Resize windows:**
 - `cmd + ctrl + h/j/k/l`: resize west/south/north/east
@@ -407,7 +407,7 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 **Service controls:**
 - `ctrl + alt + q`: stop yabai
 - `ctrl + alt + s`: start yabai
-- `ctrl + alt + r`: restart yabai and skhd, reload SketchyBar
+- `ctrl + alt + r`: restart yabai, skhd, and SketchyBar (`restart-macos-ui.sh`; also `restart-dots` / `restart-wm` from a terminal)
 - `cmd + ctrl + s`: reload SketchyBar
 
 ### skhd Helper Scripts
@@ -417,9 +417,12 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - `scripts/open-url-current-space.sh <app-name> <app-path> <url>`: opens a URL in a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + y` for YouTube in Brave.
 - `scripts/yabai-focus-current-space-window.sh [window-id]`: focuses the preferred window id, or the best visible window on the current space. Used after space/display changes and window moves.
 - `scripts/yabai-move-window-to-display.sh <west|east|north|south|prev|next>`: moves the focused window to a display, follows it, then re-focuses the window.
-- `scripts/yabai-move-window-to-relative-space.sh <prev|next>`: moves the focused window to the previous/next space, follows it, then re-focuses the window.
-- `scripts/yabai-move-window-to-space.sh <space-index>`: creates missing spaces up to the target index, moves the focused window there, follows it, re-focuses it, and reloads SketchyBar if spaces were created.
-- `scripts/yabai-destroy-empty-spaces.sh`: destroys every space with no visible non-Finder user windows, reloads SketchyBar, then focuses a window on the current space. This avoids Finder's desktop/background entry making an empty space look occupied.
+- `scripts/yabai-move-window-to-relative-space.sh <prev|next> [--follow]`: moves the focused window to the previous/next space. With `--follow`, also focuses that space and re-focuses the window. Moving past the first/last space does nothing (spaces are static).
+- `scripts/yabai-move-window-to-space.sh <space-index> [--follow]`: moves the focused window to the target space. With `--follow`, also focuses that space and re-focuses the window. If the target space does not exist it tries to create it (needs the scripting addition) and otherwise does nothing.
+- `scripts/yabai-focus-space.sh <space-index>`: focuses the target space, creating missing spaces first if the scripting addition is available. Relies on the `space_changed` signal to focus a window on the destination rather than doing it inline, which would race the transition and bounce focus back. Used by `ctrl + 1..9`.
+- `scripts/yabai-ensure-min-spaces.sh [count]`: ensures at least `count` spaces exist (default 9). With SIP enabled it cannot create spaces, so it only warns which spaces are missing. Run at yabai startup and on `space_destroyed`.
+- `scripts/yabai-destroy-empty-spaces.sh`: destroys empty spaces above the floor (default 9), so with the standard static setup it is a no-op. Needs the scripting addition, and `--destroy` is broken on macOS Tahoe regardless ([asmvik/yabai#2730](https://github.com/asmvik/yabai/issues/2730)).
+- `scripts/restart-macos-ui.sh`: restarts yabai, skhd, and SketchyBar via `launchctl kickstart`. Aliased to `restart-dots` / `restart-wm` for use from a terminal when hotkeys are dead. Used by `ctrl + alt + r`.
 
 ### yabai Behavior
 
@@ -429,8 +432,39 @@ Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps
 - Mouse: hold `ctrl` to move/resize windows; mouse drop swaps windows.
 - Visuals: window shadows off, active windows at full opacity, inactive windows at 90% opacity, quick animations, and skipped focus animation.
 - SketchyBar integration: triggers window focus updates when windows focus or titles change.
-- Scripting addition: attempts `sudo -n yabai --load-sa` on startup and after Dock restarts. Configure sudoers/SIP separately if needed.
+- Scripting addition: attempts `sudo -n yabai --load-sa` on startup and after Dock restarts (stderr discarded — it can't succeed with SIP enabled). Configure sudoers/SIP separately if needed.
 - Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, Disk Utility, and Archive Utility are unmanaged/floating.
+
+### Spaces (static, no SIP required)
+
+Spaces are a fixed set of 9, created once by hand in **Mission Control**
+(`Ctrl + Up`, then `+` on the space strip until there are 9). Everything the
+space keybinds do — focus (`ctrl + 1..9`, `alt + p/n`) and move windows
+(`hyper`/`shift + hyper`) — works with **SIP fully enabled** on yabai `>= 7.1.25`.
+
+Only creating and destroying spaces needs yabai's scripting addition, which
+requires SIP to be partially disabled. That path is deliberately avoided here
+because:
+
+- The scripting addition is version-locked to each macOS build and has no
+  published support for 26.5; `space --create` fails with SIP on.
+- `space --destroy` is broken on macOS Tahoe even with the addition loaded
+  ([asmvik/yabai#2730](https://github.com/asmvik/yabai/issues/2730)).
+- It would require re-running `sudo yabai --load-sa` after every macOS update
+  and re-granting Accessibility after every yabai upgrade.
+
+With 9 static spaces the dynamic-creation machinery is never exercised, so the
+create/destroy binds are commented out in `.skhdrc` and the helper scripts
+degrade to a no-op-with-warning if a target space is missing. To restore dynamic
+spaces, partially disable SIP, load the scripting addition, and re-enable those
+binds.
+
+> **After a yabai upgrade:** macOS binds the Accessibility grant to the binary's
+> code signature, and each build has a new signature, so the new yabai will fail
+> to start with `could not access accessibility features` until you toggle it in
+> **System Settings → Privacy & Security → Accessibility** (remove and re-add
+> `/opt/homebrew/bin/yabai` if a toggle doesn't take). A stale duplicate "yabai"
+> row per past build is expected and harmless.
 
 ### Karabiner
 

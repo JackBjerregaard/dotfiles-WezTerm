@@ -192,14 +192,16 @@ Config files:
 | `ctrl + alt + h/j/k/l` | Warp west/south/north/east |
 | `hyper + s` | Move focused window to display west and follow |
 | `hyper + g` | Move focused window to display east and follow |
-| `hyper + p` | Move focused window to previous Space and follow |
-| `hyper + n` | Move focused window to next Space and follow |
-| `hyper + 1..9` | Move focused window to Space 1..9 and follow |
-| `shift + hyper + 1..9` | Create missing Spaces up to target, move focused window there, and follow |
-| `shift + hyper + n` | Create new Space, move focused window there, and reload SketchyBar |
-| `ctrl + alt + n` | Create new empty Space and focus it |
-| `hyper + d` | Destroy current Space |
-| `ctrl + alt + d` | Destroy all empty Spaces |
+| `hyper + p` | Move focused window to previous Space without following |
+| `hyper + n` | Move focused window to next Space without following |
+| `hyper + 1..9` | Move focused window to Space 1..9 without following |
+| `shift + hyper + p` | Move focused window to previous Space and follow |
+| `shift + hyper + n` | Move focused window to next Space and follow |
+| `shift + hyper + 1..9` | Move focused window to Space 1..9 and follow |
+
+> Spaces are static (9 of them, created once in Mission Control). Dynamic
+> create/destroy binds need yabai's scripting addition (SIP partially disabled)
+> and are disabled in `.skhdrc`. See the README "Spaces" note.
 
 ### Resize
 
@@ -216,8 +218,10 @@ Config files:
 |-----|--------|
 | `ctrl + alt + q` | Stop yabai |
 | `ctrl + alt + s` | Start yabai |
-| `ctrl + alt + r` | Restart yabai and skhd, reload SketchyBar |
+| `ctrl + alt + r` | Restart yabai, skhd, and SketchyBar |
 | `cmd + ctrl + s` | Reload SketchyBar |
+
+Terminal fallback when hotkeys are dead: `restart-dots` or `restart-wm`.
 
 ## Karabiner
 

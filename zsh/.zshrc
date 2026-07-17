@@ -107,7 +107,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   BREW_PREFIX="/opt/homebrew"
   alias wezconfig="nvim ~/.wezterm.lua"
-  export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+  export DOTNET_ROOT="/usr/local/share/dotnet"
   # Postgres.app command-line tools
   if [[ -d "/Applications/Postgres.app/Contents/Versions/latest/bin" ]]; then
     export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
@@ -184,6 +184,8 @@ else
   alias ls="eza --icons=always"
 fi
 alias sync-wez="cp ~/.wezterm.lua ~/dotfiles/wezterm/.wezterm.lua && echo '✓ WezTerm config synced to dotfiles'"
+alias restart-dots="$HOME/dotfiles/scripts/restart-macos-ui.sh"
+alias restart-wm="$HOME/dotfiles/scripts/restart-macos-ui.sh"
 
 # --- RISC-V Toolchain (CompSys) ---
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -270,3 +272,6 @@ if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
   alias cd="z"
 fi
+
+# .NET MAUI iOS simulator shortcuts
+alias runmaui17pm="dotnet build -t:Run -f net10.0-ios -p:_DeviceName=:v2:udid=F03379E0-DA04-45D7-8505-6D54A3046859"
