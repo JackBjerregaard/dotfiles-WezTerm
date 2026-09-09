@@ -24,8 +24,16 @@ config.colors = {
 -- config.color_scheme = 'Everforest Dark (Gogh)'
 
 
-config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
+local function set_font(fonts)
+  config.font = wezterm.font_with_fallback(fonts)
+end
+
+set_font({
+  "Ubuntu Mono",
+  "DejaVu Sans Mono",
+})
 config.font_size = 12
+config.warn_about_missing_glyphs = false
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.95
@@ -34,17 +42,33 @@ config.skip_close_confirmation_for_processes_named = {}
 
 -- macOS-specific settings
 if wezterm.target_triple == "x86_64-apple-darwin" or wezterm.target_triple == "aarch64-apple-darwin" then
+  set_font({
+    "JetBrainsMono Nerd Font Mono",
+    "JetBrains Mono",
+    "Menlo",
+    "Monaco",
+  })
   config.macos_window_background_blur = 10
   config.font_size = 16
 end
 
 if wezterm.target_triple:find("linux") then
+  set_font({
+    "Ubuntu Mono",
+    "DejaVu Sans Mono",
+  })
   config.enable_wayland = false
   config.front_end = "OpenGL"
 end
 
  -- ==== open WSL:Ubuntu by default (recommended) ====
   if wezterm.target_triple:find("windows") then
+    set_font({
+      "Cascadia Mono",
+      "Consolas",
+      "JetBrainsMono Nerd Font Mono",
+      "JetBrains Mono",
+    })
     config.wsl_domains = wezterm.default_wsl_domains()
     config.default_domain = "WSL:Ubuntu"
   end
