@@ -10,17 +10,17 @@ Terminal and system configuration managed with [GNU Stow](https://www.gnu.org/so
 | `tmux/` | Tmux prefix/keybinds, TPM, navigation/session plugins, Tokyo Night theme |
 | `wezterm/` | WezTerm theme, fonts, opacity, WSL default domain, close/scrollback keybinds |
 | `sketchybar/` | macOS status bar, widgets, plugins, helper binaries, shared style variables |
-| `yabai/` | macOS tiling window manager, signals, rules, spacing, opacity/focus behavior |
-| `skhd/` | macOS hotkey daemon for app launching, focus, spaces, layout, moving, resizing, services |
+| `aerospace/` | macOS tiling window manager **and** hotkeys — one TOML file: workspaces, layout, rules, gaps, all keybinds |
 | `karabiner/` | Karabiner-Elements keyboard remaps for Caps Lock Hyper and Fn/Control swap |
 | `linux/` | Linux XDG defaults such as browser/application associations |
 | `hypr/` | Linux Hyprland compositor config, window-management keybinds, monitor profiles, helper scripts |
 | `waybar/` | Linux Waybar status bar config and styling |
-| `scripts/` | Bootstrap installer, npm global installer, yabai/skhd helper scripts |
+| `scripts/` | Bootstrap installer, npm global installer, app/disk helper scripts |
 | `wallpapers/` | Wallpaper collections stowed into `~/Pictures/Wallpapers` |
 | `packages/` | Optional Arch package reference lists for recreating a similar desktop |
 | `npm-global-packages.txt` | Global npm packages installed by `scripts/install-npm-globals.sh` |
-| `KEYBINDS.md` | Cross-platform keybind cheatsheet for macOS/yabai and Linux/Hyprland |
+| `KEYBINDS.md` | Cross-platform keybind cheatsheet for macOS/AeroSpace and Linux/Hyprland |
+| `MIGRATION-yabai-to-aerospace.md` | Why the macOS window manager changed, and the full yabai → AeroSpace mapping |
 
 ---
 
@@ -50,7 +50,7 @@ Or follow the manual steps below for your platform.
 **2. Install packages:**
 ```bash
 brew install git zsh tmux eza zoxide bat neovim stow node jq
-brew install asmvik/formulae/yabai asmvik/formulae/skhd
+brew install --cask nikitabobko/tap/aerospace
 brew tap FelixKratz/formulae
 brew install sketchybar switchaudio-osx nowplaying-cli lua
 brew install --cask wezterm karabiner-elements
@@ -99,7 +99,7 @@ brew install neovim eza zoxide bat node jq
 
 Continue to [Common Setup](#common-setup).
 
-> Window management tools and keyboard remaps (yabai, skhd, sketchybar, karabiner) are macOS-only — skip those stow targets.
+> Window management tools and keyboard remaps (aerospace, sketchybar, karabiner) are macOS-only — skip those stow targets.
 
 ---
 
@@ -118,7 +118,7 @@ wsl --install
 ln -sf ~/dotfiles/wezterm/.wezterm.lua /mnt/c/Users/<YourWindowsUsername>/.wezterm.lua
 ```
 
-> Window management tools (yabai, skhd, sketchybar) are macOS-only.
+> Window management tools (aerospace, sketchybar) are macOS-only.
 
 ---
 
@@ -172,7 +172,7 @@ git clone git@github.com:JackBjerregaard/neovim-config.git ~/.config/nvim
 cd ~/dotfiles
 
 # macOS — all configs:
-stow zsh tmux wezterm yabai skhd sketchybar karabiner wallpapers
+stow zsh tmux wezterm aerospace sketchybar karabiner wallpapers
 
 # Linux / WSL — shell, terminal, and Linux desktop configs:
 stow zsh tmux linux hypr waybar
@@ -205,19 +205,29 @@ p10k configure      # First time only
 
 ## macOS Services
 
-Start window management and status bar after stowing:
+Start the window manager and status bar after stowing:
 ```bash
-yabai --start-service
-skhd --start-service
+open -a AeroSpace                 # also starts at login, via start-at-login in aerospace.toml
 brew services start sketchybar
 ```
 
-Restart services:
+AeroSpace needs **Accessibility** permission on first launch:
+System Settings → Privacy & Security → Accessibility → enable AeroSpace.
+
+Reload after editing config:
 ```bash
-yabai --restart-service
-skhd --restart-service
-sketchybar --reload
+restart-dots                      # or press ctrl + alt + r
 ```
+
+`aerospace.toml` also has `auto-reload-config = true`, so saving it is usually
+enough.
+
+> AeroSpace is a normal application, not a launchd service. That is deliberate:
+> yabai and skhd were launchd agents whose `--stop-service` ran
+> `launchctl disable`, writing to a persistent override database that survived
+> reboots — one stray keypress left the window manager dead indefinitely with no
+> visible error. See
+> [`MIGRATION-yabai-to-aerospace.md`](MIGRATION-yabai-to-aerospace.md).
 
 The install script also applies this macOS default:
 
@@ -242,15 +252,15 @@ stow -R zsh     # Relink (useful after making changes)
 
 ## Keybind Cheatsheet
 
-See [`KEYBINDS.md`](KEYBINDS.md) for the consolidated macOS/yabai and Linux/Hyprland shortcut reference.
+See [`KEYBINDS.md`](KEYBINDS.md) for the consolidated macOS/AeroSpace and Linux/Hyprland shortcut reference.
 
 The cross-platform model is:
 
 - macOS `alt` maps to Linux `Super` for app launching, window focus, and workspace navigation.
 - macOS `hyper` maps to Linux `Super + Shift` for moving windows and workspaces.
-- macOS numbered Spaces stay on `ctrl + 1..9` to avoid `alt + number` text-entry conflicts.
-- macOS Spaces are the same workflow concept as Hyprland workspaces.
-- macOS/yabai displays are the same hardware concept as Hyprland monitors.
+- macOS numbered AeroSpace workspaces stay on `ctrl + 1..9` to avoid `alt + number` text-entry conflicts.
+- AeroSpace workspaces are the same workflow concept as Hyprland workspaces; macOS Spaces/Desktops should stay out of the daily workflow.
+- macOS/AeroSpace monitors are the same hardware concept as Hyprland monitors.
 
 ---
 
@@ -260,8 +270,8 @@ The Linux desktop config is managed from `hypr/.config/hypr/hyprland.conf` and s
 
 Hyprland terminology:
 
-- Workspaces are virtual desktops, equivalent to yabai/macOS Spaces.
-- Monitors are physical screens, equivalent to yabai displays.
+- Workspaces are virtual desktops, equivalent to AeroSpace workspaces on macOS.
+- Monitors are physical screens, equivalent to AeroSpace monitors on macOS.
 - The Linux setup uses `Super` as the main window-manager modifier.
 - Window movement uses `Super + Shift`.
 - Monitor movement uses `Super + Ctrl` so it does not collide with tile movement.
@@ -347,124 +357,61 @@ Hyprland terminology:
 
 ## Window Management (macOS)
 
-The macOS desktop setup is split across:
+The macOS desktop is managed by **AeroSpace**, an i3-style tiling window manager
+that works with SIP enabled. It replaced yabai + skhd; see
+[`MIGRATION-yabai-to-aerospace.md`](MIGRATION-yabai-to-aerospace.md) for the
+reasoning and the complete keybind mapping.
 
-- `yabai/.yabairc`: tiling behavior, signals, padding/gaps, opacity, mouse behavior, app rules
-- `skhd/.skhdrc`: keyboard shortcuts that drive yabai, app launching, and service reloads
-- `karabiner/.config/karabiner/karabiner.json`: low-level keyboard remaps used by the skhd Hyper chords
-- `scripts/yabai-*.sh` and `scripts/open-*.sh`: helper commands used by the skhd shortcuts
+The setup is now:
 
-Several helpers use `jq` to query yabai JSON output.
+- `aerospace/.config/aerospace/aerospace.toml`: everything — tiling, workspaces,
+  gaps, floating rules, SketchyBar callbacks, **and all keybinds**
+- `karabiner/.config/karabiner/karabiner.json`: low-level remaps that produce
+  the Hyper chord
+- `scripts/restart-macos-ui.sh`: reload the config and the bar
+- `scripts/open-*.sh`: **removed** — AeroSpace opens new windows on the focused
+  workspace, so no helper is needed
 
-### skhd Keybinds
+There is no separate hotkey daemon and no `jq` dependency.
 
-Modifier names: `alt` = Option, `cmd` = Command, `ctrl` = Control, `shift` = Shift.
-`hyper` means `ctrl + alt + cmd` for physical key chords.
-Caps Lock emits `shift + ctrl + alt + cmd`, and the main Hyper window actions accept that chord too.
-`shift + hyper` means `shift + ctrl + alt + cmd`.
+### Keybinds
 
-Karabiner maps `Caps Lock` to `Escape` when tapped and Hyper when held, so `Caps Lock + h` triggers `hyper + h`. It also swaps the global `Fn` key and left `Control`.
+Full tables are in [`KEYBINDS.md`](KEYBINDS.md). Summary of the model:
 
-**Launch:**
-- `alt + return`: open a new WezTerm window on the current space and focus it
-- `alt + b`: open a new Safari window on the current space and focus it
-- `alt + y`: open YouTube in Brave on the current space and focus it
-- `alt + q`: close the active yabai window, mirroring Linux `super + q`
+- `alt` — focus and navigate (`h/j/k/l`, `p/n`, `s/g` for monitors)
+- `ctrl + 1..9` — focus workspace
+- `hyper` (`ctrl + alt + cmd`) — move and modify windows
+- `shift + hyper` — same, but follow the window to its destination
+- `cmd + ctrl + h/j/k/l` — resize
+- `alt + shift + ;` — service mode (flatten, join, close-others)
 
-**Focus windows:**
-- `alt + h/j/k/l`: focus west/south/north/east
-- `alt + s/g`: focus display west/east
+Held Caps Lock emits `shift + ctrl + alt + cmd`, so every Hyper action is bound
+under both the three- and four-modifier forms.
 
-**Focus spaces:**
-- `alt + p/n`: previous/next space, then focus a window there
-- `ctrl + 1..9`: focus space 1..9, then focus a window there
+### AeroSpace Behavior
 
-**Layout:**
-- `hyper + e`: balance windows
-- `hyper + r`: rotate layout
-- `hyper + y`: mirror y-axis
-- `hyper + x`: mirror x-axis
-- `hyper + m`: yabai zoom fullscreen
-- `hyper + f`: native macOS fullscreen
-- `hyper + t`: toggle floating centered window
+- Layout: i3-style `tiles` tree, orientation `auto` (horizontal on wide displays), with manual balancing via `hyper + e`.
+- Spacing: 10px outer top, 8px outer bottom/left/right, 8px inner gaps — identical to the previous yabai padding.
+- Workspaces: nine persistent workspaces, created and owned by AeroSpace. SketchyBar shows `1..5` by default and reveals `6..9` when they are focused or contain windows, including intermediate hidden workspaces when a higher one is used. They are **not** macOS Spaces, so no Mission Control setup is required. See [`aerospace/WORKSPACES.md`](aerospace/WORKSPACES.md).
+- Focus: mouse follows focus (window and monitor); focus does not follow mouse.
+- SketchyBar integration: `exec-on-workspace-change` raises a custom `aerospace_workspace_change` event, and `on-focus-changed` raises `window_focus`.
+- Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, SenPlayer, VeraCrypt, Disk Utility, and Archive Utility float. Matched by bundle id rather than app-name regex, so they survive renames and localisation.
+- Startup: `start-at-login = true` in the config; `auto-reload-config = true` re-reads the file on save.
 
-**Move windows:**
-- `hyper + h/j/k/l`: swap west/south/north/east
-- `ctrl + alt + h/j/k/l`: warp west/south/north/east
-- `hyper + s/g`: move focused window to display west/east and follow it
-- `hyper + 1..9`: move focused window to space 1..9 without following it
-- `shift + hyper + 1..9`: move focused window to space 1..9 and follow
-- `hyper + p/n`: move focused window to previous/next space without following it
-- `shift + hyper + p/n`: move focused window to previous/next space and follow
+### What AeroSpace does not do
 
-Space create/destroy binds (`ctrl + alt + n`, `hyper + d`, `ctrl + alt + d`,
-`shift + hyper + n` in its old create form) are commented out in `.skhdrc`
-because they need the scripting addition — see "Spaces" below.
+Carried over honestly from the migration:
 
-**Resize windows:**
-- `cmd + ctrl + h/j/k/l`: resize west/south/north/east
+- **No mouse drag to move/resize.** yabai had `ctrl` + drag. AeroSpace is keyboard-only; use macOS's own window dragging for floating windows.
+- **No window opacity.** yabai dimmed unfocused windows to 90%. If a focus cue is wanted, [JankyBorders](https://github.com/FelixKratz/JankyBorders) draws a border instead.
+- **No mirror.** `space --mirror x/y-axis` has no equivalent; `hyper + y` and `hyper + x` were repurposed to flatten-tree and accordion-toggle.
+- **Mission Control looks odd**, because hidden workspaces are real windows parked off-screen.
+- **Exactly one macOS Space per display is required.** AeroSpace tiles within the active Space and never switches Spaces, so a leftover Mission Control desktop strands windows: a workspace switch lands on a bare screen while `aerospace list-windows` still shows the window. `scripts/aerospace-check-spaces.sh` detects it; the fix is to delete the extra desktops in Mission Control (no CLI can, without disabling SIP). See [`aerospace/WORKSPACES.md`](aerospace/WORKSPACES.md).
+- **macOS native fullscreen** (`hyper + f`) creates a macOS Space, but a transient one macOS removes on exit — fine as long as you exit it rather than leaving a window stuck fullscreen. `hyper + m` (AeroSpace fullscreen) fills the workspace with no Space and is usually what you want.
 
-**Service controls:**
-- `ctrl + alt + q`: stop yabai
-- `ctrl + alt + s`: start yabai
-- `ctrl + alt + r`: restart yabai, skhd, and SketchyBar (`restart-macos-ui.sh`; also `restart-dots` / `restart-wm` from a terminal)
-- `cmd + ctrl + s`: reload SketchyBar
-
-### skhd Helper Scripts
-
-- `scripts/open-app-current-space.sh <app-name> [app-path]`: opens a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + return` for WezTerm.
-- `scripts/open-safari-current-space.sh`: creates a new Safari document/window, keeps it on the current yabai space, then focuses it. Used by `alt + b`.
-- `scripts/open-url-current-space.sh <app-name> <app-path> <url>`: opens a URL in a new app window, moves it back to the current yabai space if needed, then focuses it. Used by `alt + y` for YouTube in Brave.
-- `scripts/yabai-focus-current-space-window.sh [window-id]`: focuses the preferred window id, or the best visible window on the current space. Used after space/display changes and window moves.
-- `scripts/yabai-move-window-to-display.sh <west|east|north|south|prev|next>`: moves the focused window to a display, follows it, then re-focuses the window.
-- `scripts/yabai-move-window-to-relative-space.sh <prev|next> [--follow]`: moves the focused window to the previous/next space. With `--follow`, also focuses that space and re-focuses the window. Moving past the first/last space does nothing (spaces are static).
-- `scripts/yabai-move-window-to-space.sh <space-index> [--follow]`: moves the focused window to the target space. With `--follow`, also focuses that space and re-focuses the window. If the target space does not exist it tries to create it (needs the scripting addition) and otherwise does nothing.
-- `scripts/yabai-focus-space.sh <space-index>`: focuses the target space, creating missing spaces first if the scripting addition is available. Relies on the `space_changed` signal to focus a window on the destination rather than doing it inline, which would race the transition and bounce focus back. Used by `ctrl + 1..9`.
-- `scripts/yabai-ensure-min-spaces.sh [count]`: ensures at least `count` spaces exist (default 9). With SIP enabled it cannot create spaces, so it only warns which spaces are missing. Run at yabai startup and on `space_destroyed`.
-- `scripts/yabai-destroy-empty-spaces.sh`: destroys empty spaces above the floor (default 9), so with the standard static setup it is a no-op. Needs the scripting addition, and `--destroy` is broken on macOS Tahoe regardless ([asmvik/yabai#2730](https://github.com/asmvik/yabai/issues/2730)).
-- `scripts/restart-macos-ui.sh`: restarts yabai, skhd, and SketchyBar via `launchctl kickstart`. Aliased to `restart-dots` / `restart-wm` for use from a terminal when hotkeys are dead. Used by `ctrl + alt + r`.
-
-### yabai Behavior
-
-- Layout: BSP tiling with `second_child` placement, focused insertion point, automatic split type, 50/50 split ratio, and manual balancing.
-- Spacing: 10px top padding, 8px bottom/left/right padding, and 8px gaps.
-- Focus: mouse follows focus, focus does not follow mouse, and focus is repaired after window destruction, minimization, app termination, space changes, and display changes.
-- Mouse: hold `ctrl` to move/resize windows; mouse drop swaps windows.
-- Visuals: window shadows off, active windows at full opacity, inactive windows at 90% opacity, quick animations, and skipped focus animation.
-- SketchyBar integration: triggers window focus updates when windows focus or titles change.
-- Scripting addition: attempts `sudo -n yabai --load-sa` on startup and after Dock restarts (stderr discarded — it can't succeed with SIP enabled). Configure sudoers/SIP separately if needed.
-- Floating rules: System Settings, Calculator, Activity Monitor, Karabiner-Elements, 1Password, Preview, QuickTime Player, SenPlayer, VeraCrypt, Disk Utility, and Archive Utility are unmanaged/floating.
-
-### Spaces (static, no SIP required)
-
-Spaces are a fixed set of 9, created once by hand in **Mission Control**
-(`Ctrl + Up`, then `+` on the space strip until there are 9). Everything the
-space keybinds do — focus (`ctrl + 1..9`, `alt + p/n`) and move windows
-(`hyper`/`shift + hyper`) — works with **SIP fully enabled** on yabai `>= 7.1.25`.
-
-Only creating and destroying spaces needs yabai's scripting addition, which
-requires SIP to be partially disabled. That path is deliberately avoided here
-because:
-
-- The scripting addition is version-locked to each macOS build and has no
-  published support for 26.5; `space --create` fails with SIP on.
-- `space --destroy` is broken on macOS Tahoe even with the addition loaded
-  ([asmvik/yabai#2730](https://github.com/asmvik/yabai/issues/2730)).
-- It would require re-running `sudo yabai --load-sa` after every macOS update
-  and re-granting Accessibility after every yabai upgrade.
-
-With 9 static spaces the dynamic-creation machinery is never exercised, so the
-create/destroy binds are commented out in `.skhdrc` and the helper scripts
-degrade to a no-op-with-warning if a target space is missing. To restore dynamic
-spaces, partially disable SIP, load the scripting addition, and re-enable those
-binds.
-
-> **After a yabai upgrade:** macOS binds the Accessibility grant to the binary's
-> code signature, and each build has a new signature, so the new yabai will fail
-> to start with `could not access accessibility features` until you toggle it in
-> **System Settings → Privacy & Security → Accessibility** (remove and re-add
-> `/opt/homebrew/bin/yabai` if a toggle doesn't take). A stale duplicate "yabai"
-> row per past build is expected and harmless.
+> **Accessibility permission:** AeroSpace needs it, and macOS ties the grant to
+> the binary's code signature. After an upgrade, if windows stop being managed,
+> re-toggle AeroSpace in **System Settings → Privacy & Security → Accessibility**.
 
 ### Karabiner
 
@@ -533,6 +480,7 @@ The active item load order is:
 ## Scripts
 
 - `scripts/install.sh`: detects macOS, Linux, or WSL; installs packages; installs Oh My Zsh, Powerlevel10k, TPM, zsh-vi-mode, and the external Neovim config; stows configs; installs tmux plugins and npm globals; sets zsh as the default shell; and starts macOS services.
+- `scripts/restart-macos-ui.sh`: reloads the AeroSpace config (starting AeroSpace first if it is not running) and reloads SketchyBar. Bound to `ctrl + alt + r`, and aliased to `restart-dots` / `restart-wm`.
 - `packages/arch-pacman.txt`: optional native Arch package reference list.
 - `packages/arch-aur.txt`: optional AUR package reference list.
 - `scripts/install-npm-globals.sh`: reads `npm-global-packages.txt`, sets npm's global prefix to `~/.npm-global` unless `NPM_CONFIG_PREFIX` is set, and installs the listed packages globally.

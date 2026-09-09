@@ -4,7 +4,7 @@ This file documents the cross-platform window-management model used by these dot
 
 ## Modifier Model
 
-| Role | macOS / yabai + skhd | Linux / Hyprland |
+| Role | macOS / AeroSpace | Linux / Hyprland |
 |------|-----------------------|------------------|
 | Main window-manager modifier | `alt` / Option | `Super` |
 | Move/modify window modifier | `hyper` = `ctrl + alt + cmd` | `Super + Shift` |
@@ -15,9 +15,9 @@ Notes:
 
 - macOS `alt` is treated like Linux `Super` for app launching, focus, and workspace navigation.
 - macOS `hyper` is treated like Linux `Super + Shift` for moving windows and workspaces.
-- macOS numbered Spaces stay on `ctrl + 1..9` because `alt + number` can collide with normal symbol entry, especially on non-US keyboard layouts.
-- macOS Spaces and Hyprland workspaces are the same workflow concept: virtual desktops.
-- yabai displays and Hyprland monitors are the same hardware concept: physical screens.
+- macOS numbered workspaces stay on `ctrl + 1..9` because `alt + number` can collide with normal symbol entry, especially on non-US keyboard layouts.
+- AeroSpace workspaces and Hyprland workspaces are the same workflow concept: virtual desktops. Note that AeroSpace workspaces are *not* macOS Spaces — see `aerospace/WORKSPACES.md`.
+- AeroSpace monitors and Hyprland monitors are the same hardware concept: physical screens.
 
 ## Cross-Platform Core
 
@@ -131,97 +131,145 @@ These are Linux-focused because the Mac setup is normally used on a single lapto
 | playback keys | Play/pause/next/previous with `playerctl` |
 | brightness keys | Brightness up/down with `brightnessctl` |
 
-## macOS / yabai + skhd
+## macOS / AeroSpace
 
 Config files:
 
-- `yabai/.yabairc`
-- `skhd/.skhdrc`
+- `aerospace/.config/aerospace/aerospace.toml` — window manager **and** hotkeys
 - `karabiner/.config/karabiner/karabiner.json`
-- `scripts/yabai-*.sh`
-- `scripts/open-*.sh`
+- `scripts/restart-macos-ui.sh`
+
+There is no separate hotkey daemon. AeroSpace handles its own key binding, so
+the whole macOS window-management setup is one TOML file. See
+[`MIGRATION-yabai-to-aerospace.md`](MIGRATION-yabai-to-aerospace.md) for what
+this replaced and why.
+
+> **Why every `hyper` bind is listed once but written twice in the config.**
+> Karabiner maps held Caps Lock to `shift + ctrl + alt + cmd` (four modifiers),
+> while physically pressing the hyper cluster gives `ctrl + alt + cmd` (three).
+> Each action is bound under both so either input works. The one deliberate
+> exception is moving a window to a workspace, where the `shift` variant also
+> follows the window.
 
 ### Applications
 
 | Key | Action |
 |-----|--------|
-| `alt + return` | Open a new WezTerm window on the current Space and focus it |
-| `alt + b` | Open a new Safari window on the current Space and focus it |
-| `alt + y` | Open YouTube in Brave on the current Space and focus it |
-| `alt + q` | Close active yabai window |
+| `alt + return` | Open a new WezTerm window on the current workspace |
+| `alt + b` | Open a new Safari window on the current workspace |
+| `alt + y` | Open YouTube in Brave on the current workspace |
+| `alt + q` | Close active window |
+
+New windows land on the focused workspace automatically, so these are plain
+`open` calls. The old versions went through ~190 lines of helper script that
+polled for the new window and dragged it onto the current Space.
 
 ### Window Focus
 
 | Key | Action |
 |-----|--------|
-| `alt + h` | Focus west |
-| `alt + j` | Focus south |
-| `alt + k` | Focus north |
-| `alt + l` | Focus east |
-| `alt + s` | Focus display west |
-| `alt + g` | Focus display east |
+| `alt + h` | Focus left |
+| `alt + j` | Focus down |
+| `alt + k` | Focus up |
+| `alt + l` | Focus right |
+| `alt + s` | Focus monitor left (wraps) |
+| `alt + g` | Focus monitor right (wraps) |
 
-### Spaces
+### Workspaces
 
 | Key | Action |
 |-----|--------|
-| `alt + p` | Previous Space |
-| `alt + n` | Next Space |
-| `ctrl + 1..9` | Focus Space 1..9 |
+| `alt + p` | Previous workspace (wraps) |
+| `alt + n` | Next workspace (wraps) |
+| `ctrl + 1..9` | Focus workspace 1..9 |
+
+Nine workspaces always exist (`persistent-workspaces` in `aerospace.toml`) and
+are created by AeroSpace itself. SketchyBar shows `1..5` by default and reveals
+`6..9` when they are focused or contain windows, including intermediate hidden
+workspaces when a higher one is used. Nothing to set up in Mission Control, and
+no dead keys when a workspace is empty.
 
 ### Layout
 
 | Key | Action |
 |-----|--------|
-| `hyper + e` | Balance windows |
-| `hyper + r` | Rotate layout |
-| `hyper + y` | Mirror y-axis |
-| `hyper + x` | Mirror x-axis |
-| `hyper + f` | Native macOS fullscreen |
-| `hyper + m` | yabai zoom fullscreen |
-| `hyper + t` | Toggle floating centered window |
+| `hyper + e` | Balance window sizes |
+| `hyper + r` | Toggle split orientation (horizontal ⇄ vertical) |
+| `hyper + y` | Flatten the workspace tree |
+| `hyper + x` | Toggle accordion ⇄ tiles |
+| `hyper + f` | macOS native fullscreen — for video / single-app focus |
+| `hyper + m` | AeroSpace fullscreen (fills the workspace, no new Space) |
+| `hyper + t` | Toggle floating / tiling |
+
+`hyper + y` and `hyper + x` were mirror y-axis / x-axis under yabai. AeroSpace
+has no mirror command, so the keys were repurposed to two things it does have
+rather than left dead.
+
+`hyper + f` creates a real macOS Space, but a transient one macOS removes when
+you exit fullscreen. Exit it rather than leaving a window stuck — leftover
+Spaces strand windows (see [`aerospace/WORKSPACES.md`](aerospace/WORKSPACES.md)).
+`hyper + m` never touches Spaces.
 
 ### Window Movement
 
 | Key | Action |
 |-----|--------|
-| `hyper + h` | Swap west |
-| `hyper + j` | Swap south |
-| `hyper + k` | Swap north |
-| `hyper + l` | Swap east |
-| `ctrl + alt + h/j/k/l` | Warp west/south/north/east |
-| `hyper + s` | Move focused window to display west and follow |
-| `hyper + g` | Move focused window to display east and follow |
-| `hyper + p` | Move focused window to previous Space without following |
-| `hyper + n` | Move focused window to next Space without following |
-| `hyper + 1..9` | Move focused window to Space 1..9 without following |
-| `shift + hyper + p` | Move focused window to previous Space and follow |
-| `shift + hyper + n` | Move focused window to next Space and follow |
-| `shift + hyper + 1..9` | Move focused window to Space 1..9 and follow |
+| `hyper + h/j/k/l` | Swap window left/down/up/right (focus follows) |
+| `ctrl + alt + h/j/k/l` | Move window left/down/up/right within the layout tree |
+| `hyper + s` | Move window to monitor left and follow |
+| `hyper + g` | Move window to monitor right and follow |
+| `hyper + p` | Move window to previous workspace, stay put |
+| `hyper + n` | Move window to next workspace, stay put |
+| `hyper + 1..9` | Move window to workspace 1..9, stay put |
+| `shift + hyper + p` | Move window to previous workspace and follow |
+| `shift + hyper + n` | Move window to next workspace and follow |
+| `shift + hyper + 1..9` | Move window to workspace 1..9 and follow |
 
-> Spaces are static (9 of them, created once in Mission Control). Dynamic
-> create/destroy binds need yabai's scripting addition (SIP partially disabled)
-> and are disabled in `.skhdrc`. See the README "Spaces" note.
+Because held Caps Lock produces the `shift` variant, Caps Lock + a number moves
+**and follows**. Press the `ctrl + alt + cmd` cluster physically to move without
+following.
 
 ### Resize
 
 | Key | Action |
 |-----|--------|
-| `cmd + ctrl + h` | Resize west |
-| `cmd + ctrl + j` | Resize south |
-| `cmd + ctrl + k` | Resize north |
-| `cmd + ctrl + l` | Resize east |
+| `cmd + ctrl + h` | Narrower |
+| `cmd + ctrl + l` | Wider |
+| `cmd + ctrl + k` | Shorter |
+| `cmd + ctrl + j` | Taller |
+
+Simplified from yabai, which resized a named edge by 20px and needed a fallback
+for when no neighbour existed in that direction.
+
+### Service Mode
+
+`alt + shift + ;` enters a one-shot mode; every key below returns to normal.
+
+| Key | Action |
+|-----|--------|
+| `esc` | Reload config |
+| `r` | Flatten workspace tree |
+| `f` | Toggle floating / tiling |
+| `backspace` | Close all windows but the current one |
+| `alt + shift + h/j/k/l` | Join window with neighbour left/down/up/right |
 
 ### Services
 
 | Key | Action |
 |-----|--------|
-| `ctrl + alt + q` | Stop yabai |
-| `ctrl + alt + s` | Start yabai |
-| `ctrl + alt + r` | Restart yabai, skhd, and SketchyBar |
+| `ctrl + alt + r` | Reload AeroSpace config and SketchyBar |
 | `cmd + ctrl + s` | Reload SketchyBar |
 
-Terminal fallback when hotkeys are dead: `restart-dots` or `restart-wm`.
+Terminal fallback: `restart-dots` or `restart-wm`.
+
+The config also auto-reloads whenever `aerospace.toml` is saved.
+
+AeroSpace is a normal application that starts at login via its own
+`start-at-login` setting — not a launchd service. This is deliberate. yabai and
+skhd were launchd agents, and `--stop-service` ran `launchctl disable`, writing
+to a persistent override database that survived reboots; one stray keypress
+could leave the window manager dead indefinitely with no visible error. That
+whole failure mode no longer exists, which is why there is no start/stop bind.
 
 ## Karabiner
 

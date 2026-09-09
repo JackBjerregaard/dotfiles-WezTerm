@@ -1,0 +1,367 @@
+# AeroSpace — macOS tiling window manager
+#
+# Stowed to ~/.config/aerospace/aerospace.toml (`stow -t "$HOME" aerospace`).
+#
+# Replaces the previous yabai + skhd pair. Both the window manager and the
+# hotkeys live in this one file: AeroSpace has its own key handling, so there is
+# no second daemon and no CGEventTap for hotkeys.
+#
+# Why the switch (see ../../MIGRATION-yabai-to-aerospace.md for the full story):
+#
+#   1. SIP is enabled on this machine and is staying that way. yabai needs SIP
+#      partially disabled for its scripting addition, without which it cannot
+#      create or destroy spaces, cannot animate, and needed ~360 lines of shell
+#      workarounds and retry loops to paper over the gaps. AeroSpace assumes SIP
+#      is on — that is its normal mode, not a degraded one.
+#   2. AeroSpace does not use macOS Spaces at all. A workspace is "the windows
+#      currently positioned on screen"; switching moves the others far off
+#      screen. macOS never sees a space change, so there is no Mission Control
+#      animation to race, which is what every one of those retry loops existed
+#      to fight.
+#   3. Dropping skhd removes one of the two CGEventTaps implicated in the wake
+#      freeze documented in ~/Desktop/mac-freeze-and-yabai-notes.md.
+#
+# Modifier model, unchanged from .skhdrc so muscle memory carries over:
+#
+#   alt                     focus / navigate      (Linux Super)
+#   ctrl + 1..9             focus workspace 1..9
+#   hyper = ctrl+alt+cmd    move / modify         (Linux Super+Shift)
+#   cmd + ctrl              resize
+#
+# IMPORTANT — why every hyper bind appears twice:
+# Karabiner maps a held Caps Lock to shift+ctrl+alt+cmd (all four), while
+# physically pressing the hyper cluster gives ctrl+alt+cmd (three). Each action
+# is therefore bound under both, exactly as .skhdrc did it. The one place the
+# two deliberately differ is moving a window to a workspace, where the shift
+# variant additionally follows the window — so Caps Lock moves and follows,
+# and the physical cluster moves without following.
+
+# Config schema version. Do not bump without reading AeroSpace release notes.
+config-version = 2
+
+# Launch on login. Replaces the yabai/skhd launchd services and their
+# `launchctl disable` persistent-override failure mode entirely: AeroSpace is a
+# normal app, so there is no service database that a stray keypress can poison.
+start-at-login = true
+
+# Re-read this file whenever it is saved. `ctrl + alt - r` also reloads
+# explicitly; both replace the old scripts/restart-macos-ui.sh.
+auto-reload-config = true
+
+# Tree normalization. Keeps the layout tree tidy after windows close, which is
+# what scripts/yabai-focus-current-space-window.sh was retrying to achieve.
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Accordion layout padding (only visible in accordion mode).
+accordion-padding = 30
+
+# Equivalent of yabai `layout bsp`. AeroSpace's 'tiles' is an i3-style tree.
+default-root-container-layout = 'tiles'
+
+# 'auto' = horizontal split on wide displays, vertical on tall ones.
+# Replaces yabai `split_type auto`.
+default-root-container-orientation = 'auto'
+
+# yabai had `focus_follows_mouse off`.
+focus-follows-mouse.enabled = false
+
+# Warp the pointer when the focused *monitor* changes. This is the surviving
+# half of yabai's `mouse_follows_focus on`, and on a single-display laptop it
+# almost never fires.
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# Refresh SketchyBar's window-title item. Replaces the yabai `window_focused` /
+# `window_title_changed` signals from the top of .yabairc.
+#
+# NOTE: 'move-mouse window-lazy-center' deliberately does NOT belong here, even
+# though it looks like the faithful translation of `mouse_follows_focus on`. The
+# trigger semantics differ: yabai fired that only on focus changes it initiated,
+# whereas AeroSpace's on-focus-changed fires on *every* focus change — including
+# ones caused by the user moving the mouse toward a window. The cursor then gets
+# yanked back to a window centre mid-movement, which feels exactly like a mouse
+# that cannot be moved. Do not re-add it.
+on-focus-changed = [
+    'exec-and-forget sketchybar --trigger window_focus',
+]
+
+# Tell SketchyBar which workspace is now focused. AeroSpace workspaces are not
+# macOS Spaces, so SketchyBar's built-in `space` items and its space_change
+# event cannot see them; the bar subscribes to this custom trigger instead.
+# See sketchybar/.config/sketchybar/items/spaces.sh.
+exec-on-workspace-change = [
+    '/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE',
+]
+
+# Nine workspaces that always exist, matching the ctrl+1..9 and hyper+1..9
+# binds. This is the direct replacement for the old static nine-Space model —
+# except these are created by AeroSpace itself, so
+# scripts/yabai-ensure-min-spaces.sh and the manual "add four desktops in
+# Mission Control" chore are both gone. Empty workspaces stay addressable.
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+# Physical key positions are read as QWERTY regardless of the active macOS
+# input source, so binds stay put on other layouts.
+key-mapping.preset = 'qwerty'
+
+# Gaps, reproducing the yabai padding exactly. Measured against the old setup:
+# tiled windows sat at y=42 on a 1117px-tall display — 32px of reserved
+# notch/menu-bar area plus 10px padding — with 8px everywhere else.
+# outer.top = 10 keeps windows clear of SketchyBar, which floats at y=5..35.
+gaps.inner.horizontal = 8
+gaps.inner.vertical   = 8
+gaps.outer.top        = 10
+gaps.outer.bottom     = 8
+gaps.outer.left       = 8
+gaps.outer.right      = 8
+
+# ---------------------------------------------------------------------------
+# Floating windows
+#
+# Replaces the eleven `yabai -m rule --add app="..." manage=off` lines. Matching
+# is by bundle id where one exists, which is more robust than yabai's app-name
+# regex (it survives localisation and renames). 1Password is matched by name
+# because it is not currently installed on this machine.
+# ---------------------------------------------------------------------------
+
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'   # System Settings
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'          # Calculator
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'     # Activity Monitor
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-name-regex-substring = '1Password'   # not installed; name match by design
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Preview'             # Preview
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.QuickTimePlayerX'    # QuickTime Player
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.wuziqi.SenPlayer'          # SenPlayer
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.idrix.VeraCrypt'           # VeraCrypt
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.DiskUtility'         # Disk Utility
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.archiveutility'      # Archive Utility
+run = 'layout floating'
+
+# ---------------------------------------------------------------------------
+# Keybindings — main mode
+# ---------------------------------------------------------------------------
+
+[mode.main.binding]
+
+# --- Applications ---------------------------------------------------------
+# The old binds went through scripts/open-app-current-space.sh and friends
+# (~190 lines that polled up to 40 times waiting for a window to appear, then
+# forced it onto the current Space). AeroSpace opens new windows on the focused
+# workspace by default, so a plain `open` is enough and all three scripts are
+# deleted.
+
+alt-enter = 'exec-and-forget open -na /Applications/WezTerm.app'
+alt-y = 'exec-and-forget open -na "/Applications/Brave Browser.app" --args --new-window https://www.youtube.com'
+
+# Safari needs AppleScript to force a *new* window: `open -a Safari` merely
+# activates an already-running instance. `make new document` also launches
+# Safari if it is not running, so this covers both cases.
+alt-b = '''exec-and-forget osascript -e 'tell application "Safari" to make new document' -e 'tell application "Safari" to activate' '''
+
+# Close the focused window (yabai: `window --close`).
+alt-q = 'close'
+
+# --- Focus ----------------------------------------------------------------
+# yabai: `window --focus west|south|north|east`
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# yabai: `display --focus west|east`, which needed a follow-up call to
+# scripts/yabai-focus-current-space-window.sh to land focus on a real window.
+# AeroSpace focuses a window directly, so the helper is gone.
+alt-s = 'focus-monitor --wrap-around left'
+alt-g = 'focus-monitor --wrap-around right'
+
+# --- Workspaces -----------------------------------------------------------
+# yabai: `space --focus prev|next`. --wrap-around is a deliberate improvement:
+# yabai errored at the ends, this cycles.
+alt-p = 'workspace --wrap-around prev'
+alt-n = 'workspace --wrap-around next'
+
+# yabai: scripts/yabai-focus-space.sh 1..9 (a 35-line wrapper that checked the
+# space existed and tried, always failing under SIP, to create it).
+ctrl-1 = 'workspace 1'
+ctrl-2 = 'workspace 2'
+ctrl-3 = 'workspace 3'
+ctrl-4 = 'workspace 4'
+ctrl-5 = 'workspace 5'
+ctrl-6 = 'workspace 6'
+ctrl-7 = 'workspace 7'
+ctrl-8 = 'workspace 8'
+ctrl-9 = 'workspace 9'
+
+# --- Layout ---------------------------------------------------------------
+# Bound under both hyper variants; see the Caps Lock note in the header.
+
+# yabai: `space --balance`
+ctrl-alt-cmd-e = 'balance-sizes'
+shift-ctrl-alt-cmd-e = 'balance-sizes'
+
+# yabai: `space --rotate 270`. AeroSpace has no rotate; toggling the split
+# orientation of the focused container is the closest equivalent and covers the
+# common case of flipping a side-by-side pair to stacked.
+ctrl-alt-cmd-r = 'layout tiles horizontal vertical'
+shift-ctrl-alt-cmd-r = 'layout tiles horizontal vertical'
+
+# yabai: `space --mirror y-axis` / `--mirror x-axis`. AeroSpace has no mirror
+# command, so these are repurposed rather than dropped: y flattens the workspace
+# tree (undo a tangled nest), x toggles accordion/tiles. Both are genuinely
+# useful and keep the keys live instead of leaving dead binds.
+ctrl-alt-cmd-y = 'flatten-workspace-tree'
+shift-ctrl-alt-cmd-y = 'flatten-workspace-tree'
+ctrl-alt-cmd-x = 'layout accordion tiles'
+shift-ctrl-alt-cmd-x = 'layout accordion tiles'
+
+# hyper + f — real macOS native fullscreen (menu bar hidden, its own screen),
+# for video and single-app focus. yabai: `window --toggle native-fullscreen`.
+#
+# This DOES create a macOS Space, but a transient type=4 one that macOS destroys
+# the moment you exit fullscreen, so it does not accumulate the way a leftover
+# regular desktop does. Exit it (same key, or ctrl+cmd+f) rather than leaving a
+# window stuck fullscreen — and if workspace switches ever land on a bare
+# screen, run scripts/aerospace-check-spaces.sh (leftover Spaces, not this).
+ctrl-alt-cmd-f = 'macos-native-fullscreen'
+shift-ctrl-alt-cmd-f = 'macos-native-fullscreen'
+
+# hyper + m — maximise the focused window to fill its workspace, staying inside
+# the tiling model with no new macOS Space. yabai: `window --toggle
+# zoom-fullscreen`.
+ctrl-alt-cmd-m = 'fullscreen'
+shift-ctrl-alt-cmd-m = 'fullscreen'
+
+# yabai: `window --toggle float --grid 4:4:1:1:2:2`. AeroSpace floats the window
+# but does not position it on a grid; macOS remembers its last floating frame.
+ctrl-alt-cmd-t = 'layout floating tiling'
+shift-ctrl-alt-cmd-t = 'layout floating tiling'
+
+# --- Window movement ------------------------------------------------------
+# yabai: `window --swap west|south|north|east`. --swap-focus keeps focus on the
+# window you moved, matching yabai.
+ctrl-alt-cmd-h = 'swap --swap-focus left'
+shift-ctrl-alt-cmd-h = 'swap --swap-focus left'
+ctrl-alt-cmd-j = 'swap --swap-focus down'
+shift-ctrl-alt-cmd-j = 'swap --swap-focus down'
+ctrl-alt-cmd-k = 'swap --swap-focus up'
+shift-ctrl-alt-cmd-k = 'swap --swap-focus up'
+ctrl-alt-cmd-l = 'swap --swap-focus right'
+shift-ctrl-alt-cmd-l = 'swap --swap-focus right'
+
+# yabai: `window --warp west|south|north|east` — re-parent into the neighbour's
+# position rather than trade places. AeroSpace's `move` is the i3-style
+# equivalent and reorders the tree.
+ctrl-alt-h = 'move left'
+ctrl-alt-j = 'move down'
+ctrl-alt-k = 'move up'
+ctrl-alt-l = 'move right'
+
+# yabai: scripts/yabai-move-window-to-display.sh west|east (always --follow).
+ctrl-alt-cmd-s = ['move-node-to-monitor --wrap-around --focus-follows-window left', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-s = ['move-node-to-monitor --wrap-around --focus-follows-window left', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-g = ['move-node-to-monitor --wrap-around --focus-follows-window right', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-g = ['move-node-to-monitor --wrap-around --focus-follows-window right', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+
+# --- Move window to workspace ---------------------------------------------
+# yabai: scripts/yabai-move-window-to-relative-space.sh prev|next [--follow].
+# Here the two hyper variants intentionally differ: plain moves, shift follows.
+#
+# Each of these also pokes SketchyBar. Moving a window to a workspace you do not
+# follow raises no workspace-change event, so without this the destination
+# indicator would keep showing stale app icons until something else refreshed
+# it. The trigger carries no FOCUSED_WORKSPACE; plugins/space.sh falls back to
+# asking AeroSpace directly.
+ctrl-alt-cmd-p = ['move-node-to-workspace --wrap-around prev', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-p = ['move-node-to-workspace --wrap-around --focus-follows-window prev', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-n = ['move-node-to-workspace --wrap-around next', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-n = ['move-node-to-workspace --wrap-around --focus-follows-window next', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+
+# yabai: scripts/yabai-move-window-to-space.sh 1..9 [--follow]
+ctrl-alt-cmd-1 = ['move-node-to-workspace 1', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-2 = ['move-node-to-workspace 2', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-3 = ['move-node-to-workspace 3', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-4 = ['move-node-to-workspace 4', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-5 = ['move-node-to-workspace 5', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-6 = ['move-node-to-workspace 6', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-7 = ['move-node-to-workspace 7', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-8 = ['move-node-to-workspace 8', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+ctrl-alt-cmd-9 = ['move-node-to-workspace 9', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+
+shift-ctrl-alt-cmd-1 = ['move-node-to-workspace --focus-follows-window 1', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-2 = ['move-node-to-workspace --focus-follows-window 2', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-3 = ['move-node-to-workspace --focus-follows-window 3', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-4 = ['move-node-to-workspace --focus-follows-window 4', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-5 = ['move-node-to-workspace --focus-follows-window 5', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-6 = ['move-node-to-workspace --focus-follows-window 6', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-7 = ['move-node-to-workspace --focus-follows-window 7', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-8 = ['move-node-to-workspace --focus-follows-window 8', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+shift-ctrl-alt-cmd-9 = ['move-node-to-workspace --focus-follows-window 9', 'exec-and-forget /bin/bash -c "sleep 0.05; sketchybar --trigger aerospace_workspace_change"']
+
+# --- Resize ---------------------------------------------------------------
+# yabai resized a specific edge by 20px with a `||` fallback for when there was
+# no neighbour in that direction. AeroSpace's `resize` is direction-aware and
+# needs no fallback. Simplified to the obvious reading of hjkl:
+#   h narrower, l wider, k shorter, j taller.
+cmd-ctrl-h = 'resize width -50'
+cmd-ctrl-l = 'resize width +50'
+cmd-ctrl-k = 'resize height -50'
+cmd-ctrl-j = 'resize height +50'
+
+# --- Services -------------------------------------------------------------
+# yabai: scripts/restart-macos-ui.sh, which restarted yabai, skhd and
+# SketchyBar. Only SketchyBar is a separate service now, so this reloads the
+# AeroSpace config and bounces the bar.
+ctrl-alt-r = ['reload-config', 'exec-and-forget sketchybar --reload']
+cmd-ctrl-s = 'exec-and-forget sketchybar --reload'
+
+# Enter the service mode below.
+alt-shift-semicolon = 'mode service'
+
+# ---------------------------------------------------------------------------
+# Service mode — occasional maintenance actions, no dedicated chord each.
+# Enter with alt+shift+; , then press one key. Every binding returns to main.
+# ---------------------------------------------------------------------------
+
+[mode.service.binding]
+esc = ['reload-config', 'mode main']
+r = ['flatten-workspace-tree', 'mode main']
+f = ['layout floating tiling', 'mode main']
+backspace = ['close-all-windows-but-current', 'mode main']
+
+# Join the focused window with a neighbour under one container.
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']

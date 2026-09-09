@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-TITLE=$(yabai -m query --windows --window 2>/dev/null | jq -r '.title // empty')
+# Title of the focused window.
+#
+# Was: yabai -m query --windows --window | jq -r '.title'
+# AeroSpace exposes the same thing without needing jq.
+
+TITLE=$(aerospace list-windows --focused --format '%{window-title}' 2>/dev/null)
 
 if [ -n "$TITLE" ] && [ "${#TITLE}" -gt 1 ]; then
   [ "${#TITLE}" -gt 50 ] && TITLE="${TITLE:0:50}…"

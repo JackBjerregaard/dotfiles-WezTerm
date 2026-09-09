@@ -34,6 +34,21 @@ sketchybar --bar height=30 \
 	popup.background.color="$POPUP_BACKGROUND_COLOR" \
 	popup.background.shadow.drawing="$SHADOW"
 
+# Custom events
+#
+# SketchyBar only delivers a custom event to items that subscribed to it *after*
+# it was registered, so these must be declared before any item is sourced.
+#
+# - aerospace_workspace_change: raised by exec-on-workspace-change in
+#   aerospace.toml, carrying FOCUSED_WORKSPACE. Drives the workspace indicators,
+#   which can no longer use SketchyBar's built-in macOS Spaces events because
+#   AeroSpace workspaces are not macOS Spaces.
+# - window_focus: raised by on-focus-changed in aerospace.toml. Previously
+#   triggered by yabai signals, but never actually registered here — so the
+#   window-title item only ever refreshed on front_app_switched.
+sketchybar --add event aerospace_workspace_change
+sketchybar --add event window_focus
+
 # Left
 # source "$ITEM_DIR/apple.sh"
 source "$ITEM_DIR/spaces.sh"

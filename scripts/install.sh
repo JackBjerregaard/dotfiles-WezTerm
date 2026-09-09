@@ -57,7 +57,7 @@ setup_macos() {
   info "Installing macOS packages..."
   install_brew
   brew install git zsh tmux eza zoxide bat neovim stow node jq
-  brew install asmvik/formulae/yabai asmvik/formulae/skhd
+  brew install --cask nikitabobko/tap/aerospace
   brew tap FelixKratz/formulae
   brew install sketchybar switchaudio-osx nowplaying-cli lua
   brew install --cask wezterm karabiner-elements
@@ -78,8 +78,15 @@ setup_macos() {
 
 set_macos_defaults() {
   info "Applying macOS defaults..."
+  # Don't jump to another Space when activating an app that has windows there.
   defaults write com.apple.dock AppleSpacesSwitchOnActivate -bool false
+  # Don't reorder Mission Control desktops by recent use — keeps Space ids stable.
+  defaults write com.apple.dock mru-spaces -bool false
   killall Dock >/dev/null 2>&1 || true
+
+  # AeroSpace wants exactly one macOS Space per display. Warn (don't fail) if
+  # leftover desktops exist — deleting them needs Mission Control, no CLI does it.
+  "$DOTFILES_DIR/scripts/aerospace-check-spaces.sh" --quiet || true
 }
 
 setup_linux() {
@@ -162,7 +169,7 @@ stow_configs() {
     stow -t "$HOME" linux hypr waybar
   fi
   if [[ "$OS" == "macos" ]]; then
-    stow -t "$HOME" wezterm yabai skhd sketchybar karabiner wallpapers
+    stow -t "$HOME" wezterm aerospace sketchybar karabiner wallpapers
   fi
   success "Configs stowed"
 }
@@ -194,8 +201,12 @@ set_default_shell() {
 
 start_macos_services() {
   info "Starting macOS services..."
-  yabai --start-service  || true
-  skhd --start-service   || true
+  # AeroSpace is a normal app with start-at-login set in its own config, not a
+  # launchd service. Deliberately so: yabai and skhd were managed with
+  # `launchctl enable/disable`, which writes to a persistent override database
+  # that survives reboots — a stray `--stop-service` left the window manager
+  # dead indefinitely with no visible error.
+  open -a AeroSpace || warn "Could not start AeroSpace — grant it Accessibility permission in System Settings"
   brew services start sketchybar || true
 }
 
